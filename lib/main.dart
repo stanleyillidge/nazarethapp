@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nazarethapp/pages/boletines.dart';
+import 'package:nazarethapp/pages/configuracion.dart';
+import 'package:nazarethapp/pages/nueva.dart';
+import 'package:nazarethapp/pages/otro.dart';
+import 'package:provider/provider.dart';
 
+import 'pages/home.dart';
 import 'widgets/estilos.dart';
 import 'widgets/models.dart';
 
@@ -36,11 +42,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    // cargaTotal();
-    // paginas.add(HomePage(key: homekey));
-    // paginas.add(BoletinesPage());
-    // paginas.add(ConfiguracionPage(key: configuracionkey));
-    // paginas.add(OtroPage());
+    cargaTotal();
+    paginas.add(HomePage(key: homekey));
+    paginas.add(const BoletinesPage());
+    paginas.add(ConfiguracionPage(key: configuracionkey));
+    paginas.add(const OtroPage());
     super.initState();
   }
 
@@ -188,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 heightT = MediaQuery.of(context).size.height;
                                 widget.login = !widget.login;
                               });
-                              /* Future.delayed(const Duration(milliseconds: 1000),
+                              Future.delayed(const Duration(milliseconds: 1000),
                                   () {
                                 Navigator.of(context).push(
                                   PageRouteBuilder(
@@ -206,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         const Duration(milliseconds: 3000),
                                   ),
                                 );
-                              }); */
+                              });
                             },
                             child: const Text('Entrar'),
                           )

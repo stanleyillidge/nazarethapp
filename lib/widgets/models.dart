@@ -5,6 +5,12 @@ import 'dart:io';
 import 'package:hive/hive.dart';
 // import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:nazarethapp/pages/home.dart';
+
+import 'docentes_x_area_table.dart';
+import 'estado_asignacion.dart';
+import 'areas.dart';
+import 'grados.dart';
 
 // ignore: prefer_typing_uninitialized_variables
 var storage;
@@ -42,12 +48,12 @@ List<int> periodos = [1];
 Asignaciones asigTotal = Asignaciones(asignaciones: []);
 double porcentajeAvance = 0;
 enum ModelType { grado, grupo, area, asignatura, estudiante, docente, ano }
-// GlobalKey<DocentesxAreaTableState> dxakey = GlobalKey();
-// GlobalKey<EstadoAsignacionState> easigkey = GlobalKey();
-// GlobalKey<GradosListState> gxakey = GlobalKey();
-// GlobalKey<AreasListState> axakey = GlobalKey();
-// GlobalKey<HomePageState> homekey = GlobalKey();
-// GlobalKey<HomePageState> configuracionkey = GlobalKey();
+GlobalKey<DocentesxAreaTableState> dxakey = GlobalKey();
+GlobalKey<EstadoAsignacionState> easigkey = GlobalKey();
+GlobalKey<GradosListState> gxakey = GlobalKey();
+GlobalKey<AreasListState> axakey = GlobalKey();
+GlobalKey<HomePageState> homekey = GlobalKey();
+GlobalKey<HomePageState> configuracionkey = GlobalKey();
 GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
