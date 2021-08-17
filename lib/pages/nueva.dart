@@ -246,24 +246,26 @@ class _NuevaPageState extends State<NuevaPage> with TickerProviderStateMixin {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 0, top: 0),
-              child: Container(
-                width: (MediaQuery.of(context).size.width * width.value),
-                height: MediaQuery.of(context).size.height * h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  /* boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.5),
-                      spreadRadius: 1.25,
-                      blurRadius: 10,
-                      offset: const Offset(4, 4),
-                    ),
-                  ], */
-                  color: background0,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 0, right: 11, top: 0),
+                child: Container(
+                  width: (size.width * width.value),
+                  height: size.height * h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    /* boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 1.25,
+                        blurRadius: 10,
+                        offset: const Offset(4, 4),
+                      ),
+                    ], */
+                    color: background0,
+                  ),
+                  child: widget.body,
                 ),
-                child: widget.body,
               ),
             ),
           ],

@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:nazarethapp/icons/school_icons_icons.dart';
+import 'package:nazarethapp/main.dart';
 import 'package:nazarethapp/widgets/dashboard_card.dart';
 import 'package:nazarethapp/widgets/estilos.dart';
 import 'package:nazarethapp/widgets/models.dart';
@@ -85,6 +87,12 @@ class HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  dynamic data = [
+    [School_icons.school, Colors.orange, 'Sedes', 6],
+    [School_icons.teacher0, Colors.purple, 'Teachers', 69],
+    [School_icons.students0, Colors.yellow, 'Students', 1690],
+    [School_icons.family0, Colors.green, 'Parents', 876]
+  ];
   bool genPlanillas2 = false;
   bool genPlanillas3 = false;
   bool loadingAll = false;
@@ -105,55 +113,90 @@ class HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Container(
-                            width: size.width * 0.88,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                              ),
-                              color: Colors.white,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 2.5, bottom: 2.5, left: 10, right: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Bienvenidos al Internado indigena de Nazareth',
-                                    style: TextStyle(
-                                      color: Colors.brown.shade700,
-                                      fontSize: font1,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                width: size.width * 0.88,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    bottomRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10),
                                   ),
-                                  Row(
+                                  color: Colors.white,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 2.5,
+                                      bottom: 2.5,
+                                      left: 10,
+                                      right: 10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        'Stanley Illidge',
+                                        'Bienvenidos al Internado indigena de Nazareth',
                                         style: TextStyle(
                                           color: Colors.brown.shade700,
                                           fontSize: font1,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(
-                                        width: 5,
-                                        height: 5,
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  MyHomePage(
+                                                login: false,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              'Stanley Illidge',
+                                              style: TextStyle(
+                                                  fontSize: font1,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                              height: 5,
+                                            ),
+                                            const CircleAvatar()
+                                          ],
+                                        ),
                                       ),
-                                      const CircleAvatar(),
+                                      /* Row(
+                                        children: [
+                                          Text(
+                                            'Stanley Illidge',
+                                            style: TextStyle(
+                                              color: Colors.brown.shade700,
+                                              fontSize: font1,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                            height: 5,
+                                          ),
+                                          const CircleAvatar(),
+                                        ],
+                                      ), */
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -161,14 +204,24 @@ class HomePageState extends State<HomePage> {
                     width: 10,
                     height: 10,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      DashBoardCard(),
-                      DashBoardCard(),
-                      DashBoardCard(),
-                      DashBoardCard(),
-                    ],
+                  SizedBox(
+                    height: 100.0,
+                    child: ListView.separated(
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const SizedBox(width: 10);
+                      },
+                      physics: const ClampingScrollPhysics(),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 4,
+                      itemBuilder: (BuildContext context, int index) =>
+                          DashBoardCard(
+                        icon: data[index][0],
+                        color: data[index][1],
+                        titulo: data[index][2],
+                        count: data[index][3],
+                      ),
+                    ),
                   ),
                 ],
               ),
