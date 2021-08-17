@@ -1,13 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:nazarethapp/widgets/docentes_x_area_table.dart';
-import 'package:nazarethapp/widgets/estado_asignacion.dart';
+import 'package:nazarethapp/widgets/dashboard_card.dart';
 import 'package:nazarethapp/widgets/estilos.dart';
-import 'package:nazarethapp/widgets/excel_admin.dart';
 import 'package:nazarethapp/widgets/models.dart';
-
-import '../main.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -21,7 +17,7 @@ class HomePageState extends State<HomePage> {
       ScrollController(initialScrollOffset: 0.0);
   TextEditingController ano = TextEditingController();
 
-  Future<void> _showMyDialog(String titulo, List<Widget> body) async {
+  /* Future<void> _showMyDialog(String titulo, List<Widget> body) async {
     ScrollController? _dialogScrollController;
     return showDialog<void>(
       context: context,
@@ -46,7 +42,7 @@ class HomePageState extends State<HomePage> {
         );
       },
     );
-  }
+  } */
 
   init() async {
     setState(() {
@@ -71,7 +67,7 @@ class HomePageState extends State<HomePage> {
     dropdownTipo = 'Area';
     porcentajeAvance = 0;
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback(
+    /* WidgetsBinding.instance!.addPostFrameCallback(
       (_) => dxakey.currentState!.setState(
         () {
           listaPendientes = [];
@@ -80,7 +76,7 @@ class HomePageState extends State<HomePage> {
           dxakey.currentState!.cargaAsignaciones(dropdownTipo, dropdownPeriodo);
         },
       ),
-    );
+    ); */
   }
 
   @override
@@ -103,8 +99,80 @@ class HomePageState extends State<HomePage> {
             constraints:
                 BoxConstraints(minHeight: viewportConstraints.maxHeight),
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.only(top: 0.7, left: 25, right: 25),
               child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                            width: size.width * 0.88,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                              ),
+                              color: Colors.white,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 2.5, bottom: 2.5, left: 10, right: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Bienvenidos al Internado indigena de Nazareth',
+                                    style: TextStyle(
+                                      color: Colors.brown.shade700,
+                                      fontSize: font1,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Stanley Illidge',
+                                        style: TextStyle(
+                                          color: Colors.brown.shade700,
+                                          fontSize: font1,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                        height: 5,
+                                      ),
+                                      const CircleAvatar(),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      DashBoardCard(),
+                      DashBoardCard(),
+                      DashBoardCard(),
+                      DashBoardCard(),
+                    ],
+                  ),
+                ],
+              ),
+              /* Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -206,32 +274,6 @@ class HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                     ),
-                                    /* SizedBox(
-                                  width: 5,
-                                  height: 10,
-                                ),
-                                SizedBox(
-                                  width: 29,
-                                  height: 29,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.all(0),
-                                      // textStyle: TextStyle(fontSize: 18),
-                                      primary: Colors.brown[
-                                          100], //Theme.of(context).primaryColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      _addYear();
-                                    },
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                ), */
                                   ],
                                 ),
                                 const SizedBox(
@@ -296,93 +338,8 @@ class HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                     ),
-                                    /* SizedBox(
-                                      width: 5,
-                                      height: 10,
-                                    ),
-                                    SizedBox(
-                                      width: 29,
-                                      height: 29,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.all(0),
-                                          // textStyle: TextStyle(fontSize: 18),
-                                          primary: Colors.brown[
-                                              100], //Theme.of(context).primaryColor,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5),
-                                          ),
-                                        ),
-                                        onPressed: () async {
-                                          _addPeriodo();
-                                        },
-                                        child: Icon(
-                                          Icons.add,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                      ),
-                                    ), */
                                   ],
                                 ),
-                                /* SizedBox(
-                                  width: 30,
-                                  height: 10,
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    textStyle: TextStyle(fontSize: 18),
-                                    primary: Colors.green,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  ),
-                                  onPressed: () async {
-                                    setState(() {
-                                      loadingAll = true;
-                                    });
-                                    await openFile(context);
-                                    setState(() {
-                                      estudiantes = estudiantes;
-                                      asigTotal.asignaciones =
-                                          asigTotal.asignaciones;
-                                      grados = grados;
-                                      areas = areas;
-                                      loadingAll = false;
-                                    });
-                                    await acPendientes();
-                                    String titulo = 'Documento cargado';
-                                    List<Widget> body = [];
-                                    body.add(Text(
-                                        'La información fue cargada correctamente!'));
-                                    _showMyDialog(titulo, body);
-                                  },
-                                  child: Container(
-                                    // width: 210,
-                                    height: 30,
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        (loadingAll)
-                                            ? SizedBox(
-                                                width: 15,
-                                                height: 15,
-                                                child: CircularProgressIndicator(
-                                                  color: Colors.white,
-                                                  // strokeWidth: 1.5,
-                                                ),
-                                              )
-                                            : Icon(Icons.dashboard_customize_sharp),
-                                        SizedBox(
-                                          width: 10,
-                                          height: 10,
-                                        ),
-                                        Text('Cargar documento'),
-                                      ],
-                                    ),
-                                  ),
-                                ), */
                               ],
                             ),
                           ),
@@ -733,7 +690,7 @@ class HomePageState extends State<HomePage> {
                     ],
                   ),
                 ],
-              ),
+              ), */
             ),
           ),
         );

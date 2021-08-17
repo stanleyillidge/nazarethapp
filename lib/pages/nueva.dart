@@ -128,13 +128,22 @@ class _NuevaPageState extends State<NuevaPage> with TickerProviderStateMixin {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
-        color: Colors.brown,
+        // color: Colors.brown,
+        decoration: BoxDecoration(
+          color: Colors.brown.withOpacity(0.95),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.2), BlendMode.dstATop),
+            image: const AssetImage("assets/images/login0.jpg"),
+          ),
+        ),
         width: size.width,
         height: size.height,
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 11, top: 0),
+              padding: const EdgeInsets.only(left: 11, right: 0, top: 0),
               child: SizedBox(
                 width: menu.value,
                 height: size.height * 0.98,
@@ -187,21 +196,15 @@ class _NuevaPageState extends State<NuevaPage> with TickerProviderStateMixin {
                                       ),
                                     );
                                   }
-                                  /* Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              menus[index].ruta!),
-                                    ); */
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: (menus[index].activo!)
-                                        ? Colors.brown.shade400
+                                        ? background0
                                         : Colors.transparent,
                                     border: Border.all(
                                         color: (menus[index].activo!)
-                                            ? Colors.white
+                                            ? background0
                                             : Colors.transparent),
                                     borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(15),
@@ -209,17 +212,25 @@ class _NuevaPageState extends State<NuevaPage> with TickerProviderStateMixin {
                                     ),
                                   ),
                                   child: ListTile(
-                                    contentPadding: const EdgeInsets.fromLTRB(
-                                        22.5, 0, 5, 0),
+                                    contentPadding:
+                                        const EdgeInsets.fromLTRB(15, 0, 5, 0),
                                     // visualDensity: VisualDensity.comfortable,
                                     horizontalTitleGap: 5,
-                                    leading: menus[index].icono,
+                                    leading: Icon(
+                                      menus[index].icono!.icon,
+                                      size: 30,
+                                      color: (menus[index].activo!)
+                                          ? Colors.brown
+                                          : background0,
+                                    ),
                                     title: (menuOpen.value != 0)
                                         ? Text(
                                             menus[index].titulo!,
                                             style: TextStyle(
                                               fontSize: (menuOpen.value * 0.1),
-                                              color: Colors.white,
+                                              color: (menus[index].activo!)
+                                                  ? Colors.brown
+                                                  : background0,
                                             ),
                                           )
                                         : Container(),
@@ -236,21 +247,21 @@ class _NuevaPageState extends State<NuevaPage> with TickerProviderStateMixin {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 5, top: 0),
+              padding: const EdgeInsets.only(left: 0, top: 0),
               child: Container(
                 width: (MediaQuery.of(context).size.width * width.value),
                 height: MediaQuery.of(context).size.height * h,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
+                  /* boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.5),
                       spreadRadius: 1.25,
                       blurRadius: 10,
                       offset: const Offset(4, 4),
                     ),
-                  ],
-                  color: Colors.white,
+                  ], */
+                  color: background0,
                 ),
                 child: widget.body,
               ),
