@@ -135,7 +135,7 @@ class _NuevaPageState extends State<NuevaPage> with TickerProviderStateMixin {
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
                 Colors.black.withOpacity(0.2), BlendMode.dstATop),
-            image: const AssetImage("assets/images/login0.jpg"),
+            image: const AssetImage("assets/images/login51.jpg"),
           ),
         ),
         width: size.width,

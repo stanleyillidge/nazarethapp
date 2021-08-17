@@ -14,6 +14,7 @@ class DashBoardCard extends StatefulWidget {
 }
 
 class _DashBoardCardState extends State<DashBoardCard> {
+  double escala = 0.19;
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -24,7 +25,7 @@ class _DashBoardCardState extends State<DashBoardCard> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: SizedBox(
-        width: size.width * 0.205,
+        width: size.width * escala,
         height: 100,
         child: Row(
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -33,7 +34,7 @@ class _DashBoardCardState extends State<DashBoardCard> {
             Row(
               children: [
                 SizedBox(
-                  width: 15,
+                  width: 10,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
@@ -47,7 +48,7 @@ class _DashBoardCardState extends State<DashBoardCard> {
               ],
             ),
             SizedBox(
-              width: (size.width * 0.205) - 15,
+              width: (size.width * escala) - 15,
               height: 100,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

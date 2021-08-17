@@ -69,6 +69,10 @@ flutter:
     - assets/images/login2.jpg
     - assets/images/login3.jpg
     - assets/images/login4.jpg
+    - assets/images/login5.jpg
+    - assets/images/login51.jpg
+    - assets/images/login6.jpg
+    - assets/images/login7.jpg
     - assets/Template1.xlsx
     - assets/logros.xlsx
   # An image asset can refer to one or more resolution-specific "variants", see

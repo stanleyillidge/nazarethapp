@@ -5,7 +5,7 @@ double h = 0.98;
 double widthT = 50;
 double heightT = 50;
 double top = 7.0;
-double font1 = 16.0;
+double font1 = 17.0;
 Color background0 = Colors.blueGrey.shade50;
 
 TextStyle titulo = const TextStyle(
