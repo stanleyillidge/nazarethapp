@@ -1,12 +1,9 @@
 // ignore_for_file: avoid_print
-
 import 'dart:io';
-
 import 'package:hive/hive.dart';
 // import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:nazarethapp/pages/home.dart';
-
 import 'docentes_x_area_table.dart';
 import 'estado_asignacion.dart';
 import 'areas.dart';

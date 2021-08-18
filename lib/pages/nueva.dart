@@ -57,8 +57,8 @@ class _NuevaPageState extends State<NuevaPage> with TickerProviderStateMixin {
       ),
     );
     menu = Tween<double>(
-      begin: 75,
-      end: 210,
+      begin: 60,
+      end: 180,
     ).animate(
       CurvedAnimation(
         parent: controller,
@@ -143,7 +143,7 @@ class _NuevaPageState extends State<NuevaPage> with TickerProviderStateMixin {
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 11, right: 0, top: 0),
+              padding: const EdgeInsets.only(left: 8, right: 0, top: 0),
               child: SizedBox(
                 width: menu.value,
                 height: size.height * 0.98,
@@ -213,7 +213,7 @@ class _NuevaPageState extends State<NuevaPage> with TickerProviderStateMixin {
                                   ),
                                   child: ListTile(
                                     contentPadding:
-                                        const EdgeInsets.fromLTRB(15, 0, 5, 0),
+                                        const EdgeInsets.fromLTRB(10, 0, 5, 0),
                                     // visualDensity: VisualDensity.comfortable,
                                     horizontalTitleGap: 5,
                                     leading: Icon(

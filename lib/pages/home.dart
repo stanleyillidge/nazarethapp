@@ -86,11 +86,13 @@ class HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  double espacio2 = 0.44;
+  double espacio3 = 0.35;
   dynamic data = [
     [School_icons.school, Colors.orange, 'Sedes', 6],
     [School_icons.teacher0, Colors.purple, 'Docentes', 69],
     [School_icons.students0, Colors.yellow, 'Estudiantes', 1690],
-    [School_icons.family0, Colors.green, 'Padres', 876]
+    [School_icons.family0, Colors.green, 'Reportes', 876]
   ];
   bool genPlanillas2 = false;
   bool genPlanillas3 = false;
@@ -106,7 +108,7 @@ class HomePageState extends State<HomePage> {
             constraints:
                 BoxConstraints(minHeight: viewportConstraints.maxHeight),
             child: Padding(
-              padding: const EdgeInsets.only(top: 0.7, left: 25, right: 25),
+              padding: const EdgeInsets.only(top: 0, left: 20, right: 20),
               child: Column(
                 children: [
                   Row(
@@ -117,14 +119,14 @@ class HomePageState extends State<HomePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Expanded(
-                              child: Container(
-                                width: size.width * 0.88,
-                                decoration: const BoxDecoration(
+                              child: Card(
+                                elevation: 2,
+                                color: Colors.white,
+                                shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.only(
                                     bottomRight: Radius.circular(10),
                                     bottomLeft: Radius.circular(10),
                                   ),
-                                  color: Colors.white,
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -368,13 +370,13 @@ class HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(
                     width: 10,
-                    height: 20,
+                    height: 10,
                   ),
                   SizedBox(
                     height: 100.0,
                     child: ListView.separated(
                       separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(width: 50);
+                        return const SizedBox(width: 45);
                       },
                       physics: const ClampingScrollPhysics(),
                       shrinkWrap: true,
@@ -388,6 +390,93 @@ class HomePageState extends State<HomePage> {
                         count: data[index][3],
                       ),
                     ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Card(
+                              elevation: 3,
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: SizedBox(
+                                width: size.width * espacio2,
+                                height: size.height * espacio3,
+                                child: Container(),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.01,
+                            height: 10,
+                          ),
+                          Expanded(
+                            child: Card(
+                              elevation: 3,
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: SizedBox(
+                                width: size.width * espacio2,
+                                height: size.height * espacio3,
+                                child: Container(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 10,
+                        height: size.height * 0.01,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Card(
+                              elevation: 3,
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: SizedBox(
+                                width: size.width * espacio2,
+                                height: size.height * espacio3,
+                                child: Container(),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.01,
+                            height: 10,
+                          ),
+                          Expanded(
+                            child: Card(
+                              elevation: 3,
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: SizedBox(
+                                width: size.width * espacio2,
+                                height: size.height * espacio3,
+                                child: Container(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
