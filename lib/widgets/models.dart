@@ -13,6 +13,8 @@ import 'grados.dart';
 var storage;
 // ignore: prefer_typing_uninitialized_variables
 var anosLectivosStorage;
+// ignore: prefer_typing_uninitialized_variables
+var calificacionesStorage;
 bool act = false;
 String dropdownTipo = 'Area';
 String dropdownYear = '2020';
@@ -30,6 +32,13 @@ List<Estudiante> estudiantes = [];
 List<Docente> docentes = [];
 List<AsignacionT> asignacionesPendientes = [];
 List<Logro> logros = [];
+List<Calificacion> calificaciones = [];
+List<Calificacion> calificacionesFinales = [];
+Criterio criterios = Criterio(nombre: 'criterios');
+Criterio nFinal = Criterio(nombre: 'notaFinal', porcentaje: 1);
+Criterio esfuerzo = Criterio(nombre: 'esfuerzo', porcentaje: 0.5);
+Criterio actitud = Criterio(nombre: 'actitud', porcentaje: 0.25);
+Criterio creatividad = Criterio(nombre: 'creatividad', porcentaje: 0.25);
 // List listaPendientes = [];
 List<DashboardCard> listaPendientes = [];
 ResumenAsignacionT pendientes = ResumenAsignacionT(
@@ -123,7 +132,13 @@ Future cargaTotal([String? year]) async {
   grados = [];
   estudiantes = [];
   docentes = [];
+  calificaciones = [];
+  calificacionesFinales = [];
   asigTotal.asignaciones = [];
+  criterios.criterios = [];
+  criterios.add(esfuerzo);
+  criterios.add(actitud);
+  criterios.add(creatividad);
   var path = Directory.current.path;
   Hive.init(path);
   if (year == null) {
@@ -132,6 +147,7 @@ Future cargaTotal([String? year]) async {
     dropdownYear = year;
   }
   storage = await Hive.openBox(dropdownYear);
+  calificacionesStorage = await Hive.openBox('calificaciones ' + dropdownYear);
   await carga('Logros');
   await carga('Sedes');
   await carga('Areas');
@@ -242,6 +258,75 @@ String sede(String grupo) {
     }
   }
   return ss;
+}
+
+double notaFinal(List<Calificacion> notas) {
+  double nota = 0.0;
+  for (var i = 0; i < notas.length; i++) {
+    nota += (notas[i].nota * notas[i].criterio.porcentaje!);
+  }
+  return nota;
+}
+
+actualizaCalificacion(
+    String userId,
+    String docente,
+    String grupo,
+    String codGrado,
+    String area,
+    Criterio criterio,
+    double nota,
+    List<String> logros,
+    int periodo,
+    List<Calificacion> rta,
+    String tipo) {
+  if (tipo == 'c') {
+    // la calificación existe?
+    if (rta.isNotEmpty) {
+      // la calificación SI existe, la actualizo!
+      var ci = calificaciones.indexOf(rta[0]);
+      calificaciones[ci].nota = nota;
+      calificaciones[ci].lastUpdate = DateTime.now();
+    } else {
+      // la calificación NO existe, la añado!
+      Calificacion cal = Calificacion(
+        userId: userId,
+        docente: docente,
+        grupo: grupo,
+        codGrado: codGrado,
+        area: area,
+        lastUpdate: DateTime.now(),
+        criterio: criterio,
+        nota: nota,
+        logros: logros,
+        periodo: periodo,
+      );
+      calificaciones.add(cal);
+    }
+  } else if (tipo == 'f') {
+    // la calificación existe?
+    if (rta.isNotEmpty) {
+      // la calificación SI existe, la actualizo!
+      var ci = calificacionesFinales.indexOf(rta[0]);
+      calificacionesFinales[ci].nota = nota;
+      calificacionesFinales[ci].lastUpdate = DateTime.now();
+    } else {
+      // la calificación NO existe, la añado!
+      Calificacion cal = Calificacion(
+        userId: userId,
+        docente: docente,
+        grupo: grupo,
+        codGrado: codGrado,
+        area: area,
+        lastUpdate: DateTime.now(),
+        criterio: criterio,
+        nota: nota,
+        logros: logros,
+        periodo: periodo,
+      );
+      calificacionesFinales.add(cal);
+    }
+  }
 }
 
 class Ano {
@@ -1222,33 +1307,130 @@ class Docente {
   }
 }
 
+class Criterio {
+  double? porcentaje;
+  String? nombre;
+  List<Criterio>? criterios;
+
+  Criterio({
+    this.porcentaje,
+    required this.nombre,
+  });
+
+  add(Criterio data) {
+    double t = 0;
+    criterios ??= [];
+    for (var i = 0; i < criterios!.length; i++) {
+      t += criterios![i].porcentaje!;
+    }
+    t += data.porcentaje!;
+    if (t < 1) {
+      criterios!.add(data);
+    } else {
+      print(['No se puede añadir', data.nombre]);
+      return;
+    }
+  }
+
+  Criterio.fromJson(Map<dynamic, dynamic> json) {
+    try {
+      porcentaje =
+          (json['porcentaje'] != null) ? json['porcentaje'].toDouble() : 0;
+      nombre = (json['nombre'] != null) ? json['nombre'] : '';
+    } catch (e) {
+      print(['Error en modelo Criterio', e, json]);
+    }
+  }
+
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = <dynamic, dynamic>{};
+    if (porcentaje != null) {
+      data['porcentaje'] = porcentaje;
+    }
+    if (nombre != null) {
+      data['nombre'] = nombre;
+    }
+    if (criterios != null) {
+      data['criterios'] = [];
+      for (var e in criterios!) {
+        data['criterios'].add(e.toJson());
+      }
+    }
+    return data;
+  }
+
+  dynamic get(String propertyName) {
+    var _mapRep = toJson();
+    if (_mapRep.containsKey(propertyName)) {
+      return _mapRep[propertyName];
+    }
+    throw ArgumentError('propery not found');
+  }
+}
+
+class Nota {
+  Criterio? criterio;
+  double? nota;
+  Nota({
+    this.nota,
+    this.criterio,
+  });
+}
+
 class Calificacion {
+  late String userId;
+  late String codGrado;
+  late String grupo;
   late String docente;
   late String area;
-  late DateTime fecha;
+  late DateTime lastUpdate;
   late double nota;
+  late Criterio criterio;
   int? periodo;
+  bool estado = true;
   String? actividad;
+  String? desempeno;
   List<String>? logros;
+  final DateTime creacion = DateTime.now();
 
   Calificacion({
+    required this.userId,
+    required this.codGrado,
+    required this.grupo,
     required this.docente,
     required this.area,
-    required this.fecha,
+    required this.lastUpdate,
     required this.nota,
+    required this.criterio,
     this.periodo,
     this.actividad,
     this.logros,
-  });
+    this.estado = true,
+  }) : desempeno = (nota <= 5 && nota >= 4.6)
+            ? 'Desempeño Superior'
+            : (nota <= 4.5 && nota >= 4)
+                ? 'Desempeño Alto'
+                : (nota <= 3.9 && nota >= 3.5)
+                    ? 'Desempeño Basico'
+                    : 'Desempeño Bajo';
 
   Calificacion.fromJson(Map<dynamic, dynamic> json) {
     try {
+      userId = (json['userId'] != null) ? json['userId'] : 'No tiene';
       docente = (json['docente'] != null) ? json['docente'] : 'No tiene';
       area = (json['area'] != null) ? json['area'] : 'No tiene';
+      codGrado = (json['codGrado'] != null) ? json['codGrado'] : 'No tiene';
+      grupo = (json['grupo'] != null) ? json['grupo'] : 'No tiene';
       nota = (json['nota'] != null) ? json['nota'].toDouble() : 0;
-      fecha = (json['fecha'] != null)
-          ? DateTime.parse(json['fecha'])
-          : DateTime.now();
+      lastUpdate = (json['lastUpdate'] != null)
+          ? DateTime.parse(json['lastUpdate'])
+          : (json['creacion'] != null)
+              ? DateTime.parse(json['creacion'])
+              : DateTime.now();
+      estado = (json['estado'] != null) ? json['estado'] : true;
+      // creacion = (json['creacion'] != null)
+      //     ? DateTime.parse(json['creacion'])
+      //     : DateTime.now();
       actividad = (json['actividad'] != null) ? json['actividad'] : 'No tiene';
       periodo = (json['periodo'] != null) ? json['periodo'] : 1;
       logros = (json['logros'] != null) ? json['logros'] : ['No tiene'];
@@ -1259,10 +1441,15 @@ class Calificacion {
 
   Map<dynamic, dynamic> toJson() {
     final Map<dynamic, dynamic> data = <dynamic, dynamic>{};
+    data['userId'] = userId;
     data['docente'] = docente;
+    data['codGrado'] = codGrado;
+    data['grupo'] = grupo;
     data['area'] = area;
-    data['fecha'] = fecha.toIso8601String();
+    data['lastUpdate'] = lastUpdate.toIso8601String();
+    data['creacion'] = creacion.toIso8601String();
     data['nota'] = nota;
+    data['estado'] = estado;
     if (periodo != null) {
       data['periodo'] = periodo;
     }
@@ -1279,121 +1466,6 @@ class Calificacion {
     var _mapRep = toJson();
     if (_mapRep.containsKey(propertyName)) {
       return _mapRep[propertyName];
-    }
-    throw ArgumentError('propery not found');
-  }
-}
-
-class Calificaciones {
-  List<Calificacion>? lista;
-  Calificaciones({
-    this.lista,
-  });
-
-  Calificaciones.fromJson(Map<dynamic, dynamic> json) {
-    try {
-      // calificacion =
-      //     (json['calificacion'] != null) ? json['calificacion'] : null;
-      if (json['lista'] != null) {
-        var a = json['lista'];
-        lista = <Calificacion>[];
-        for (var i = 0; i < a.length; i++) {
-          lista!.add(Calificacion.fromJson(a[i]));
-        }
-      } else {
-        lista = <Calificacion>[];
-      }
-    } catch (e) {
-      print(['Error en modelo Calificaciones', e, json]);
-    }
-  }
-
-  Map<dynamic, dynamic> toJson() {
-    final Map<dynamic, dynamic> data = <dynamic, dynamic>{};
-    if (lista != null) {
-      data['lista'] = [];
-      for (var c in lista!) {
-        data['lista'].add(c.toJson());
-      }
-    }
-    return data;
-  }
-
-  dynamic notaFinal() {
-    double notaFinal = 0;
-    double p = 0;
-    if (lista!.isNotEmpty) {
-      for (var i = 0; i < lista!.length; i++) {
-        notaFinal += lista![i].nota;
-      }
-      p = notaFinal / lista!.length;
-    }
-    return p;
-  }
-
-  notasByProperty(String propiedad,
-      [String? docente,
-      String? area,
-      DateTime? fecha,
-      double? nota,
-      int? periodo,
-      String? actividad]) {
-    if (lista != null) {
-      if (lista!.isNotEmpty) {
-        for (var i = 0; i < lista!.length; i++) {
-          bool test = false;
-          switch (propiedad) {
-            case 'docente':
-              test = lista![i].docente.contains(docente!);
-              break;
-            case 'area':
-              test = lista![i].area.contains(area!);
-              break;
-            case 'fecha':
-              test = lista![i].fecha == fecha!;
-              break;
-            case 'nota':
-              test = lista![i].nota == nota!;
-              break;
-            case 'periodo':
-              test =
-                  lista![i].periodo!.toString().contains(periodo!.toString());
-              break;
-            case 'actividad':
-              test = lista![i].actividad!.contains(actividad!);
-              break;
-            default:
-          }
-          if (test) {
-            return lista![i];
-          }
-        }
-      }
-    }
-    return 'propery not found';
-  }
-
-  xArea(String area) {
-    if (lista != null) {
-      if (lista!.isNotEmpty) {
-        for (var i = 0; i < lista!.length; i++) {
-          if (lista![i].area.contains(area)) {
-            return lista![i];
-          }
-        }
-      }
-    }
-    return 'propery not found';
-  }
-
-  Calificacion xDocente(String docente) {
-    List<Calificacion> c = [];
-    if (lista!.isNotEmpty) {
-      for (var i = 0; i < lista!.length; i++) {
-        if (lista![i].docente.contains(docente)) {
-          c.add(lista![i]);
-        }
-      }
     }
     throw ArgumentError('propery not found');
   }
@@ -1423,7 +1495,7 @@ class Estudiante {
   bool? selected;
   bool? editado;
   // List?<Clase> cursos;
-  Calificaciones? calificaciones;
+  // List<Calificacion>? _calificaciones;
 
   Estudiante({
     this.nombre,
@@ -1449,11 +1521,11 @@ class Estudiante {
     this.courseId,
     // this.cursos,
     // this.profile,
-    this.calificaciones,
+    // this.calificaciones,
   });
 
   // verifica todas sus calificaciones
-  Future<int> allCalifications() async {
+  /* Future<int> allCalifications() async {
     int ok = 0;
     var planE =
         asigTotal.asignaciones.where((a) => (a.grupo == grupo)).toList();
@@ -1465,11 +1537,39 @@ class Estudiante {
       }
     }
     return ok;
+  } */
+  List<Calificacion> misCalificaciones() {
+    List<Calificacion> rta = [];
+    rta.addAll(calificaciones
+        .where((c) =>
+            (c.userId == userId) &&
+            (c.grupo == grupo) &&
+            (c.codGrado == gradoCod.toString()))
+        .toList());
+    return rta;
+  }
+
+  List<Calificacion> misCalificacionesFinales() {
+    List<Calificacion> rta = [];
+    rta.addAll(calificacionesFinales
+        .where((c) =>
+            (c.userId == userId) &&
+            (c.grupo == grupo) &&
+            (c.codGrado == gradoCod.toString()))
+        .toList());
+    return rta;
+  }
+
+  double miPromedio() {
+    double rta = 0.0;
+    rta = notaFinal(misCalificacionesFinales());
+    return rta;
   }
   //
 
   Estudiante.fromJson(Map<dynamic, dynamic> json) {
     try {
+      userId = (json['userId'] != null) ? json['userId'] : 'No tiene';
       apellido1 = (json['apellido1'] != null) ? json['apellido1'] : 'No tiene';
       apellido2 = (json['apellido2'] != null) ? json['apellido2'] : 'No tiene';
       nombre1 = (json['nombre1'] != null) ? json['nombre1'] : 'No tiene';
@@ -1491,9 +1591,9 @@ class Estudiante {
       index = (json['index'] != null) ? json['index'] : 0;
       selected = (json['selected'] != null) ? json['selected'] : false;
       editado = (json['editado'] != null) ? json['editado'] : false;
-      calificaciones = (json['calificaciones'] != null)
-          ? Calificaciones.fromJson(json['calificaciones'])
-          : null;
+      // calificaciones = (json['calificaciones'] != null)
+      // ? Calificaciones.fromJson(json['calificaciones'])
+      // : null;
     } catch (e) {
       print(['Error en modelo Estudiante', e, json]);
     }
@@ -1557,6 +1657,7 @@ class Estudiante {
           : 'No tiene';
       sede = sedet;
       jornada = (json[12] != null) ? json[12] : 'No tiene';
+      userId = (json[19] != null) ? json[19] : 'xxxxxxxxxx';
       grupo = (json[14] != null) ? json[14] : 'No tiene';
       gradoCod = (json[13] != null) ? json[13].toInt() : -1;
       grado = (json[13] != null)
@@ -1669,10 +1770,10 @@ class Estudiante {
     if (courseId != null) {
       data['courseId'] = courseId;
     }
-    if (calificaciones != null) {
-      Calificaciones c = calificaciones!;
-      data['calificaciones'] = c.toJson();
-    }
+    // if (calificaciones != null) {
+    //   Calificaciones c = calificaciones!;
+    //   data['calificaciones'] = c.toJson();
+    // }
     return data;
   }
 
@@ -1822,6 +1923,15 @@ List<MenuElement> menus = [
   ),
   MenuElement(
     icono: const Icon(
+      Icons.grading_rounded,
+      color: Colors.white,
+      size: 30,
+    ),
+    titulo: 'Listas',
+    activo: false,
+  ),
+  MenuElement(
+    icono: const Icon(
       Icons.library_books,
       color: Colors.white,
       size: 30,
@@ -1848,3 +1958,150 @@ List<MenuElement> menus = [
     activo: false,
   ),
 ];
+
+/* class Point {
+  double? x = 0;
+  final double y = 0;
+
+  Point({this.x});
+
+  Point.fromJson(Map<dynamic, dynamic> json) {
+    try {
+      x = (json['x'] != null) ? json['x'].toDouble() : 0;
+    } catch (e) {
+      print(['Error en modelo Criterio', e, json]);
+    }
+  }
+
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = <dynamic, dynamic>{};
+    if (x != null) {
+      data['x'] = x;
+    }
+    data['y'] = y;
+    return data;
+  }
+}
+
+void main() {
+  print(Point.fromJson(Point(x: 1).toJson()).toJson());
+} */
+
+/* class Calificaciones {
+  List<Calificacion>? lista;
+  Calificaciones({
+    this.lista,
+  });
+
+  Calificaciones.fromJson(Map<dynamic, dynamic> json) {
+    try {
+      // calificacion =
+      //     (json['calificacion'] != null) ? json['calificacion'] : null;
+      if (json['lista'] != null) {
+        var a = json['lista'];
+        lista = <Calificacion>[];
+        for (var i = 0; i < a.length; i++) {
+          lista!.add(Calificacion.fromJson(a[i]));
+        }
+      } else {
+        lista = <Calificacion>[];
+      }
+    } catch (e) {
+      print(['Error en modelo Calificaciones', e, json]);
+    }
+  }
+
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = <dynamic, dynamic>{};
+    if (lista != null) {
+      data['lista'] = [];
+      for (var c in lista!) {
+        data['lista'].add(c.toJson());
+      }
+    }
+    return data;
+  }
+
+  // dynamic notaFinal() {
+  //   double notaFinal = 0;
+  //   double p = 0;
+  //   if (lista!.isNotEmpty) {
+  //     for (var i = 0; i < lista!.length; i++) {
+  //       notaFinal += lista![i].nota;
+  //     }
+  //     p = notaFinal / lista!.length;
+  //   }
+  //   return p;
+  // }
+
+  notasByProperty(String propiedad,
+      [String? userId,
+      String? docente,
+      String? area,
+      DateTime? lastUpdate,
+      double? nota,
+      int? periodo,
+      String? actividad]) {
+    if (lista != null) {
+      if (lista!.isNotEmpty) {
+        for (var i = 0; i < lista!.length; i++) {
+          bool test = false;
+          switch (propiedad) {
+            case 'userId':
+              test = lista![i].userId.contains(userId!);
+              break;
+            case 'docente':
+              test = lista![i].docente.contains(docente!);
+              break;
+            case 'area':
+              test = lista![i].area.contains(area!);
+              break;
+            case 'lastUpdate':
+              test = lista![i].lastUpdate == lastUpdate!;
+              break;
+            case 'nota':
+              test = lista![i].nota == nota!;
+              break;
+            case 'periodo':
+              test =
+                  lista![i].periodo!.toString().contains(periodo!.toString());
+              break;
+            case 'actividad':
+              test = lista![i].actividad!.contains(actividad!);
+              break;
+            default:
+          }
+          if (test) {
+            return lista![i];
+          }
+        }
+      }
+    }
+    return 'propery not found';
+  }
+
+  xArea(String area) {
+    if (lista != null) {
+      if (lista!.isNotEmpty) {
+        for (var i = 0; i < lista!.length; i++) {
+          if (lista![i].area.contains(area)) {
+            return lista![i];
+          }
+        }
+      }
+    }
+    return 'propery not found';
+  }
+
+  Calificacion xDocente(String docente) {
+    List<Calificacion> c = [];
+    if (lista!.isNotEmpty) {
+      for (var i = 0; i < lista!.length; i++) {
+        if (lista![i].docente.contains(docente)) {
+          c.add(lista![i]);
+        }
+      }
+    }
+    throw ArgumentError('propery not found');
+  }
+} */

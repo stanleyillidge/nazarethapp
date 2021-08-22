@@ -104,7 +104,6 @@ excelFile(BuildContext context, String path) async {
           var periodo = int.parse(rows[4][3].toString());
           var codGrado =
               (grupo.length >= 2) ? grupo.substring(0, 1) : grupo.substring(0);
-          var fecha = DateTime.now();
           var lista = estudiantes
               .where((e) =>
                   ((e.sede!.toUpperCase() == sede.toString().toUpperCase()) &&
@@ -152,67 +151,115 @@ excelFile(BuildContext context, String path) async {
           }
           bool estado = true;
           for (var i = 0; i < lista.length; i++) {
-            var n0 = rows[i + 7][1];
-            var n1 = lista[i].apellidos! + ' ' + lista[i].nombres!;
-            var nota = (rows[i + 7][5] != '') ? rows[i + 7][5] : 0;
-            nota = nota + 0.0;
-            estado = ((nota != 0.0) && (n0 == n1))
-                ? (estado && true)
-                : (estado && false);
+            var n0 = rows[i + 7][1]; // nombre en la hoja de calculo
+            var n1 = lista[i].apellidos! +
+                ' ' +
+                lista[i].nombres!; // nombre en la BD
+            List<Nota> notas = [];
+            notas.add((rows[i + 7][3] != '')
+                ? Nota(nota: rows[i + 7][3] + 0.0, criterio: esfuerzo)
+                : Nota(nota: 0, criterio: esfuerzo));
+            notas.add((rows[i + 7][4] != '')
+                ? Nota(nota: rows[i + 7][4] + 0.0, criterio: actitud)
+                : Nota(nota: 0, criterio: actitud));
+            notas.add((rows[i + 7][5] != '')
+                ? Nota(nota: rows[i + 7][5] + 0.0, criterio: creatividad)
+                : Nota(nota: 0, criterio: creatividad));
+            var notat = (notas[0].nota! != 0) &&
+                (notas[1].nota! != 0) &&
+                (notas[2].nota! != 0);
+            estado =
+                ((notat) && (n0 == n1)) ? (estado && true) : (estado && false);
             // var index = estudiantes.indexOf(lista[i]);
             // print(['estado', n1, estado]);
-            if (n0 == n1) {
-              List<String> logrosf = [];
-              for (var j = 0; j < logros.length; j++) {
-                if (await logroNota(j, logro1, nota) != null) {
-                  logrosf.add(await logroNota(j, logro1, nota));
-                } else if (await logroNota(j, logro2, nota) != null) {
-                  logrosf.add(await logroNota(j, logro2, nota));
-                } else if (await logroNota(j, logro3, nota) != null) {
-                  logrosf.add(await logroNota(j, logro3, nota));
-                }
-              }
-              Calificacion cal = Calificacion(
-                docente: docente,
-                area: area,
-                fecha: fecha,
-                nota: nota,
-                logros: logrosf,
-                periodo: periodo,
-              );
-              var index = estudiantes.indexOf(lista[i]);
-              if (estudiantes[index].calificaciones != null) {
-                // print(estudiantes[index].calificaciones!.toJson());
-                var ca = estudiantes[index].calificaciones!.xArea(area);
-                // print(['Calificacion actual', ca]);
-                if (ca != 'propery not found') {
-                  var ocal = estudiantes[index]
-                      .calificaciones!
-                      .lista!
-                      .firstWhere(
-                          (c) => ((c.area == area) && (c.periodo == periodo)));
-                  var cindex =
-                      estudiantes[index].calificaciones!.lista!.indexOf(ocal);
-                  estudiantes[index].calificaciones!.lista![cindex] = cal;
-                } else {
-                  if (estudiantes[index].calificaciones!.lista == null) {
-                    estudiantes[index].calificaciones!.lista = <Calificacion>[];
+            for (var j = 0; j < notas.length; j++) {
+              if (n0 == n1) {
+                List<String> logrosf = [];
+                for (var j = 0; j < logros.length; j++) {
+                  if (await logroNota(j, logro1, notas[j].nota!) != null) {
+                    logrosf.add(await logroNota(j, logro1, notas[j].nota!));
+                  } else if (await logroNota(j, logro2, notas[j].nota!) !=
+                      null) {
+                    logrosf.add(await logroNota(j, logro2, notas[j].nota!));
+                  } else if (await logroNota(j, logro3, notas[j].nota!) !=
+                      null) {
+                    logrosf.add(await logroNota(j, logro3, notas[j].nota!));
                   }
-                  estudiantes[index].calificaciones!.lista!.add(cal);
                 }
-              } else {
-                estudiantes[index].calificaciones = Calificaciones(lista: []);
-                estudiantes[index].calificaciones!.lista!.add(cal);
+                var ie = estudiantes.indexOf(lista[i]);
+                var rta = calificaciones
+                    .where((c) =>
+                        (c.userId == estudiantes[ie].userId!) &&
+                        (c.docente == docente) &&
+                        (c.grupo == grupo) &&
+                        (c.codGrado == codGrado) &&
+                        (c.area == area) &&
+                        (c.periodo == periodo) &&
+                        (c.criterio.nombre == notas[j].criterio!.nombre))
+                    .toList();
+                // la calificación existe?
+                actualizaCalificacion(
+                  estudiantes[ie].userId!,
+                  docente,
+                  grupo,
+                  codGrado,
+                  area,
+                  notas[j].criterio!,
+                  notas[j].nota!,
+                  logrosf,
+                  periodo,
+                  rta,
+                  'c',
+                );
+                // consulto todas las calificaciones
+                var cals = calificaciones
+                    .where((c) =>
+                        (c.userId == estudiantes[ie].userId!) &&
+                        (c.docente == docente) &&
+                        (c.grupo == grupo) &&
+                        (c.codGrado == codGrado) &&
+                        (c.area == area) &&
+                        (c.periodo == periodo))
+                    .toList();
+                // creo la calificacion final y la añado!
+                double notafinal = notaFinal(cals);
+                rta = calificacionesFinales
+                    .where((c) =>
+                        (c.userId == estudiantes[ie].userId!) &&
+                        (c.docente == docente) &&
+                        (c.grupo == grupo) &&
+                        (c.codGrado == codGrado) &&
+                        (c.area == area) &&
+                        (c.periodo == periodo))
+                    .toList();
+                actualizaCalificacion(
+                  estudiantes[ie].userId!,
+                  docente,
+                  grupo,
+                  codGrado,
+                  area,
+                  nFinal,
+                  notafinal,
+                  logrosf,
+                  periodo,
+                  rta,
+                  'f',
+                );
               }
-              // print(estudiantes[index].toJson());
             }
           }
-          var listaE = [];
-          for (var gg in estudiantes) {
-            listaE.add(gg.toJson());
+          var listaC = [];
+          for (var cx in calificaciones) {
+            listaC.add(cx.toJson());
           }
-          await storage.put('Estudiantes', listaE);
-          // print('Estudiantes guardados');
+          await calificacionesStorage.put('Calificaciones', listaC);
+          // print('Calificaciones guardadas',listaC);
+          var listaCf = [];
+          for (var cx in calificacionesFinales) {
+            listaCf.add(cx.toJson());
+          }
+          await storage.put('Calificaciones', listaCf);
+          // print('Calificaciones finales guardadas',listaCf);
           asigTotal.asignaciones =
               await actualizarPendientes(sede, area, docente, grupo, estado);
           var listaAsig = [];

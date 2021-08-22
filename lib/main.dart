@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nazarethapp/pages/boletines.dart';
 import 'package:nazarethapp/pages/configuracion.dart';
+import 'package:nazarethapp/pages/listas.dart';
 import 'package:nazarethapp/pages/nueva.dart';
 import 'package:nazarethapp/pages/otro.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     cargaTotal();
     paginas.add(HomePage(key: homekey));
+    paginas.add(const ListasPage());
     paginas.add(const BoletinesPage());
     paginas.add(ConfiguracionPage(key: configuracionkey));
     paginas.add(const OtroPage());

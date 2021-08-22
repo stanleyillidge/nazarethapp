@@ -389,9 +389,7 @@ class _GrupoCardState extends State<GrupoCard> {
             .where((e) => (e.grupo == resGrupos[widget.index].nombre))
             .toList();
         lista.sort((a, b) {
-          return a.calificaciones!
-              .notaFinal()
-              .compareTo(b.calificaciones!.notaFinal());
+          return a.miPromedio().compareTo(b.miPromedio());
         });
         // print(lista[0].toJson());
       },

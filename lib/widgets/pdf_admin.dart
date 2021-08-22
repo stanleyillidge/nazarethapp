@@ -82,9 +82,7 @@ Future<void> generateBoletin2(Resumen datos) async {
       .where((e) => (e.grupo == datos.asignacion![0].grupo))
       .toList();
   lista.sort((a, b) {
-    return a.calificaciones!
-        .notaFinal()
-        .compareTo(b.calificaciones!.notaFinal());
+    return a.miPromedio().compareTo(b.miPromedio());
   });
   // Crea los boletines individuales
   for (var i = 0; i < lista.length; i++) {
@@ -113,8 +111,8 @@ Future<void> generateBoletin2(Resumen datos) async {
     // Page1
     // drawGrid2(page, grid2, result, inicio + (step * 0));
     // print(['Estudiante', lista[i].toJson()]);
-    for (var j = 0; j < lista[i].calificaciones!.lista!.length; j++) {
-      Calificacion cal = lista[i].calificaciones!.lista![j];
+    for (var j = 0; j < lista[i].misCalificacionesFinales().length; j++) {
+      Calificacion cal = lista[i].misCalificacionesFinales()[j];
       final PdfGrid grid2 = getGrid02(cal);
       double salto = (cal.logros!.isEmpty)
           ? (((step * 5) * (cal.logros!.length + 1)) * j)
@@ -149,9 +147,7 @@ Future<void> generateBoletin3(Resumen datos) async {
       .where((e) => (e.grupo == datos.asignacion![0].grupo))
       .toList();
   lista.sort((a, b) {
-    return a.calificaciones!
-        .notaFinal()
-        .compareTo(b.calificaciones!.notaFinal());
+    return a.miPromedio().compareTo(b.miPromedio());
   });
   // Crea los boletines individuales
   for (var i = 0; i < lista.length; i++) {
@@ -169,7 +165,7 @@ Future<void> generateBoletin3(Resumen datos) async {
     // Page1
     // drawGrid2(page, grid2, result, inicio + (step * 0));
     // print(['Estudiante', lista[i].toJson()]);
-    List<Calificacion> listax = lista[i].calificaciones!.lista!;
+    List<Calificacion> listax = lista[i].misCalificacionesFinales();
     listax.sort((a, b) {
       return a.area.toLowerCase().compareTo(b.area.toLowerCase());
     });
