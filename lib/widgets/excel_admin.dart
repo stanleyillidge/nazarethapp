@@ -189,7 +189,7 @@ excelFile(BuildContext context, String path) async {
                 var ie = estudiantes.indexOf(lista[i]);
                 var rta = calificaciones
                     .where((c) =>
-                        (c.userId == estudiantes[ie].userId!) &&
+                        (c.estudianteId == estudiantes[ie].userId!) &&
                         (c.docente == docente) &&
                         (c.grupo == grupo) &&
                         (c.codGrado == codGrado) &&
@@ -199,6 +199,7 @@ excelFile(BuildContext context, String path) async {
                     .toList();
                 // la calificación existe?
                 actualizaCalificacion(
+                  docente,
                   estudiantes[ie].userId!,
                   docente,
                   grupo,
@@ -214,7 +215,7 @@ excelFile(BuildContext context, String path) async {
                 // consulto todas las calificaciones
                 var cals = calificaciones
                     .where((c) =>
-                        (c.userId == estudiantes[ie].userId!) &&
+                        (c.estudianteId == estudiantes[ie].userId!) &&
                         (c.docente == docente) &&
                         (c.grupo == grupo) &&
                         (c.codGrado == codGrado) &&
@@ -225,7 +226,7 @@ excelFile(BuildContext context, String path) async {
                 double notafinal = notaFinal(cals);
                 rta = calificacionesFinales
                     .where((c) =>
-                        (c.userId == estudiantes[ie].userId!) &&
+                        (c.estudianteId == estudiantes[ie].userId!) &&
                         (c.docente == docente) &&
                         (c.grupo == grupo) &&
                         (c.codGrado == codGrado) &&
@@ -233,6 +234,7 @@ excelFile(BuildContext context, String path) async {
                         (c.periodo == periodo))
                     .toList();
                 actualizaCalificacion(
+                  docente,
                   estudiantes[ie].userId!,
                   docente,
                   grupo,

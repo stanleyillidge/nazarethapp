@@ -19,7 +19,7 @@ class _DashBoardCardState extends State<DashBoardCard> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Card(
-      elevation: 2,
+      elevation: 1,
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),

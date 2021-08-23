@@ -47,6 +47,7 @@ ResumenAsignacionT pendientes = ResumenAsignacionT(
   grados: [],
   grupos: [],
 );
+String institucionEducativa = 'Internado indigena de Nazareth';
 List<String> filtroPendientes = ['Area', 'Grado', 'Grupo', 'Docente'];
 List<String> anosLectivos = [DateTime.now().year.toString()];
 List<Ano> anos = [];
@@ -270,6 +271,7 @@ double notaFinal(List<Calificacion> notas) {
 
 actualizaCalificacion(
     String userId,
+    String estudianteId,
     String docente,
     String grupo,
     String codGrado,
@@ -287,20 +289,21 @@ actualizaCalificacion(
       var ci = calificaciones.indexOf(rta[0]);
       calificaciones[ci].nota = nota;
       calificaciones[ci].lastUpdate = DateTime.now();
+      calificaciones[ci].userId = userId;
     } else {
       // la calificación NO existe, la añado!
       Calificacion cal = Calificacion(
-        userId: userId,
+        estudianteId: estudianteId,
         docente: docente,
         grupo: grupo,
         codGrado: codGrado,
         area: area,
-        lastUpdate: DateTime.now(),
         criterio: criterio,
         nota: nota,
         logros: logros,
         periodo: periodo,
       );
+      cal.userId = userId;
       calificaciones.add(cal);
     }
   } else if (tipo == 'f') {
@@ -310,20 +313,21 @@ actualizaCalificacion(
       var ci = calificacionesFinales.indexOf(rta[0]);
       calificacionesFinales[ci].nota = nota;
       calificacionesFinales[ci].lastUpdate = DateTime.now();
+      calificacionesFinales[ci].userId = userId;
     } else {
       // la calificación NO existe, la añado!
       Calificacion cal = Calificacion(
-        userId: userId,
+        estudianteId: estudianteId,
         docente: docente,
         grupo: grupo,
         codGrado: codGrado,
         area: area,
-        lastUpdate: DateTime.now(),
         criterio: criterio,
         nota: nota,
         logros: logros,
         periodo: periodo,
       );
+      cal.userId = userId;
       calificacionesFinales.add(cal);
     }
   }
@@ -1378,12 +1382,13 @@ class Nota {
 }
 
 class Calificacion {
-  late String userId;
+  late String estudianteId;
   late String codGrado;
   late String grupo;
   late String docente;
   late String area;
-  late DateTime lastUpdate;
+  DateTime lastUpdate = DateTime.now();
+  late String userId;
   late double nota;
   late Criterio criterio;
   int? periodo;
@@ -1391,32 +1396,33 @@ class Calificacion {
   String? actividad;
   String? desempeno;
   List<String>? logros;
-  final DateTime creacion = DateTime.now();
+  DateTime creacion = DateTime.now();
 
   Calificacion({
-    required this.userId,
+    required this.estudianteId,
     required this.codGrado,
     required this.grupo,
     required this.docente,
     required this.area,
-    required this.lastUpdate,
     required this.nota,
     required this.criterio,
     this.periodo,
     this.actividad,
     this.logros,
     this.estado = true,
-  }) : desempeno = (nota <= 5 && nota >= 4.6)
+  })  : desempeno = (nota <= 5 && nota >= 4.6)
             ? 'Desempeño Superior'
             : (nota <= 4.5 && nota >= 4)
                 ? 'Desempeño Alto'
                 : (nota <= 3.9 && nota >= 3.5)
                     ? 'Desempeño Basico'
-                    : 'Desempeño Bajo';
+                    : 'Desempeño Bajo',
+        lastUpdate = DateTime.now();
 
   Calificacion.fromJson(Map<dynamic, dynamic> json) {
     try {
-      userId = (json['userId'] != null) ? json['userId'] : 'No tiene';
+      estudianteId =
+          (json['estudianteId'] != null) ? json['estudianteId'] : 'No tiene';
       docente = (json['docente'] != null) ? json['docente'] : 'No tiene';
       area = (json['area'] != null) ? json['area'] : 'No tiene';
       codGrado = (json['codGrado'] != null) ? json['codGrado'] : 'No tiene';
@@ -1424,13 +1430,9 @@ class Calificacion {
       nota = (json['nota'] != null) ? json['nota'].toDouble() : 0;
       lastUpdate = (json['lastUpdate'] != null)
           ? DateTime.parse(json['lastUpdate'])
-          : (json['creacion'] != null)
-              ? DateTime.parse(json['creacion'])
-              : DateTime.now();
+          : DateTime.parse(json['creacion']);
       estado = (json['estado'] != null) ? json['estado'] : true;
-      // creacion = (json['creacion'] != null)
-      //     ? DateTime.parse(json['creacion'])
-      //     : DateTime.now();
+      creacion = DateTime.parse(json['creacion']);
       actividad = (json['actividad'] != null) ? json['actividad'] : 'No tiene';
       periodo = (json['periodo'] != null) ? json['periodo'] : 1;
       logros = (json['logros'] != null) ? json['logros'] : ['No tiene'];
@@ -1441,7 +1443,7 @@ class Calificacion {
 
   Map<dynamic, dynamic> toJson() {
     final Map<dynamic, dynamic> data = <dynamic, dynamic>{};
-    data['userId'] = userId;
+    data['estudianteId'] = estudianteId;
     data['docente'] = docente;
     data['codGrado'] = codGrado;
     data['grupo'] = grupo;
@@ -1542,7 +1544,7 @@ class Estudiante {
     List<Calificacion> rta = [];
     rta.addAll(calificaciones
         .where((c) =>
-            (c.userId == userId) &&
+            (c.estudianteId == userId) &&
             (c.grupo == grupo) &&
             (c.codGrado == gradoCod.toString()))
         .toList());
@@ -1553,7 +1555,7 @@ class Estudiante {
     List<Calificacion> rta = [];
     rta.addAll(calificacionesFinales
         .where((c) =>
-            (c.userId == userId) &&
+            (c.estudianteId == userId) &&
             (c.grupo == grupo) &&
             (c.codGrado == gradoCod.toString()))
         .toList());
