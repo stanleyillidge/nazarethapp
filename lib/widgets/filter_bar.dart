@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:search_choices/search_choices.dart';
+// import 'package:search_choices/search_choices.dart';
 
 import 'estilos.dart';
 import 'models.dart';
@@ -51,7 +51,7 @@ class _FilterBarState extends State<FilterBar> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, Widget> widgets;
+    /* Map<String, Widget> widgets;
     widgets = {
       "Single dialog": SearchChoices.single(
         items: items,
@@ -107,7 +107,7 @@ class _FilterBarState extends State<FilterBar> {
         isExpanded: true,
         menuConstraints: BoxConstraints.tight(const Size.fromHeight(350)),
       ), */
-    };
+    }; */
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -126,7 +126,7 @@ class _FilterBarState extends State<FilterBar> {
                     padding: const EdgeInsets.only(
                         top: 5, bottom: 5, left: 10, right: 10),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           widget.titulo!,
@@ -136,7 +136,147 @@ class _FilterBarState extends State<FilterBar> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Column(
+                        const SizedBox(
+                          width: 30,
+                          height: 10,
+                        ),
+                        Text(
+                          'Sede',
+                          style: TextStyle(
+                            color: Colors.brown.shade700,
+                            fontSize: font1,
+                            // fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              height: 30,
+                              width: 130,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors
+                                    .transparent, //Theme.of(context).primaryColor,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15.0),
+                                child: DropdownButton<int>(
+                                  value: dropdownPeriodo,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 30,
+                                  // elevation: 16,
+                                  style: const TextStyle(
+                                    color: Colors.brown,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  focusColor: Colors.deepPurple,
+                                  borderRadius: BorderRadius.circular(5),
+                                  underline: Container(
+                                    height: 0,
+                                    color: Colors.deepPurpleAccent,
+                                  ),
+                                  onChanged: (int? newValue) {
+                                    setState(() {
+                                      dropdownPeriodo = newValue!;
+                                      print(dropdownPeriodo);
+                                      dxakey.currentState!.setState(() {
+                                        listaPendientes = [];
+                                        asignacionesPendientes =
+                                            asignacionesPendientes;
+                                        dxakey.currentState!.cargaAsignaciones(
+                                            dropdownTipo, dropdownPeriodo);
+                                      });
+                                    });
+                                  },
+                                  items: periodos
+                                      .map<DropdownMenuItem<int>>((int value) {
+                                    return DropdownMenuItem<int>(
+                                      value: value,
+                                      child:
+                                          Text('Periodo ' + value.toString()),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 30,
+                          height: 10,
+                        ),
+                        Text(
+                          'Grupo',
+                          style: TextStyle(
+                            color: Colors.brown.shade700,
+                            fontSize: font1,
+                            // fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              height: 30,
+                              width: 130,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors
+                                    .transparent, //Theme.of(context).primaryColor,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15.0),
+                                child: DropdownButton<int>(
+                                  value: dropdownPeriodo,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 30,
+                                  // elevation: 16,
+                                  style: const TextStyle(
+                                    color: Colors.brown,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  focusColor: Colors.deepPurple,
+                                  borderRadius: BorderRadius.circular(5),
+                                  underline: Container(
+                                    height: 0,
+                                    color: Colors.deepPurpleAccent,
+                                  ),
+                                  onChanged: (int? newValue) {
+                                    setState(() {
+                                      dropdownPeriodo = newValue!;
+                                      print(dropdownPeriodo);
+                                      dxakey.currentState!.setState(() {
+                                        listaPendientes = [];
+                                        asignacionesPendientes =
+                                            asignacionesPendientes;
+                                        dxakey.currentState!.cargaAsignaciones(
+                                            dropdownTipo, dropdownPeriodo);
+                                      });
+                                    });
+                                  },
+                                  items: periodos
+                                      .map<DropdownMenuItem<int>>((int value) {
+                                    return DropdownMenuItem<int>(
+                                      value: value,
+                                      child:
+                                          Text('Periodo ' + value.toString()),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        /* Column(
                           children: widgets
                               .map((k, v) {
                                 return (MapEntry(
@@ -150,8 +290,8 @@ class _FilterBarState extends State<FilterBar> {
                               })
                               .values
                               .toList(),
-                        ),
-                        Row(
+                        ), */
+                        /* Row(
                           children: [
                             Text(
                               'Año lectivo',
@@ -305,7 +445,7 @@ class _FilterBarState extends State<FilterBar> {
                               ],
                             ),
                           ],
-                        ),
+                        ), */
                       ],
                     ),
                   ),

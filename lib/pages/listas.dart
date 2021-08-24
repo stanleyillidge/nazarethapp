@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nazarethapp/icons/school_icons_icons.dart';
 import 'package:nazarethapp/widgets/filter_bar.dart';
 import 'package:nazarethapp/widgets/models.dart';
+import 'package:nazarethapp/widgets/pie_chart.dart';
 import 'package:nazarethapp/widgets/top_bar.dart';
 
 class ListasPage extends StatefulWidget {
@@ -99,7 +100,7 @@ class _ListasPageState extends State<ListasPage> {
   bool loadingAll = false;
   @override
   Widget build(BuildContext context) {
-    // var size = MediaQuery.of(context).size;
+    var size = MediaQuery.of(context).size;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints viewportConstraints) {
         return SingleChildScrollView(
@@ -110,17 +111,154 @@ class _ListasPageState extends State<ListasPage> {
             child: Padding(
               padding: const EdgeInsets.only(top: 0, left: 20, right: 20),
               child: Column(
-                children: const [
-                  TopBar(
+                children: [
+                  const TopBar(
                     titulo: 'Listas',
                   ),
-                  SizedBox(
-                    width: 10,
-                    height: 10,
+                  // const SizedBox(
+                  //   width: 5,
+                  //   height: 5,
+                  // ),
+                  const FilterBar(
+                    titulo: 'Filtros',
                   ),
-                  FilterBar(
-                    titulo: 'Listas',
+                  const SizedBox(
+                    width: 5,
+                    height: 5,
                   ),
+                  Row(children: [
+                    Column(
+                      children: [
+                        Container(
+                          color: Colors.white,
+                          width: size.width * 0.2,
+                          height: size.height * 0.82,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: size.width * 0.2,
+                                height: 200,
+                                child: const GrupoPieChart(
+                                  aprobados: 40,
+                                  reprobados: 30,
+                                  pendientes: 30,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: SizedBox(
+                                  width: size.width * 0.2,
+                                  height: 200,
+                                  child: Column(
+                                    children: [
+                                      Row(children: [
+                                        const CircleAvatar(
+                                          radius: 17,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                          height: 5,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: const [
+                                            Text(
+                                              'Nombres y apellidos #1',
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                            Text(
+                                              '1° Puesto',
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                          ],
+                                        ),
+                                      ]),
+                                      const SizedBox(
+                                        width: 15,
+                                        height: 15,
+                                      ),
+                                      Row(children: [
+                                        const CircleAvatar(
+                                          radius: 17,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                          height: 5,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: const [
+                                            Text(
+                                              'Nombres y apellidos #1',
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                            Text(
+                                              '1° Puesto',
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                          ],
+                                        ),
+                                      ]),
+                                      const SizedBox(
+                                        width: 15,
+                                        height: 15,
+                                      ),
+                                      Row(children: [
+                                        const CircleAvatar(
+                                          radius: 17,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                          height: 5,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: const [
+                                            Text(
+                                              'Nombres y apellidos #1',
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                            Text(
+                                              '1° Puesto',
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                          ],
+                                        ),
+                                      ]),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        /* Placeholder(
+                          fallbackWidth: size.width * 0.2,
+                          fallbackHeight: size.height * 0.82,
+                        ) */
+                      ],
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Placeholder(
+                            fallbackWidth: size.width * 0.71,
+                            fallbackHeight: size.height * 0.82,
+                          )
+                        ],
+                      ),
+                    ),
+                  ]),
                 ],
               ),
             ),
