@@ -24,13 +24,13 @@ class _GrupoPieChartState extends State<GrupoPieChart> {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1.3,
-      child: Card(
-        color: Colors.white,
-        child: Row(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+        ),
+        child: Column(
           children: <Widget>[
-            const SizedBox(
-              height: 18,
-            ),
             Expanded(
               child: AspectRatio(
                 aspectRatio: 1,
@@ -54,17 +54,17 @@ class _GrupoPieChartState extends State<GrupoPieChart> {
                     borderData: FlBorderData(
                       show: false,
                     ),
-                    sectionsSpace: 0,
-                    centerSpaceRadius: 35,
+                    sectionsSpace: 5,
+                    centerSpaceRadius: 45,
                     sections: showingSections(),
                   ),
                 ),
               ),
             ),
-            Column(
+            Row(
               mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: const <Widget>[
                 Indicator(
                   color: Colors.lightGreen,
@@ -100,9 +100,9 @@ class _GrupoPieChartState extends State<GrupoPieChart> {
                 ),
               ],
             ),
-            // const SizedBox(
-            //   width: 28,
-            // ),
+            const SizedBox(
+              height: 10,
+            ),
           ],
         ),
       ),
@@ -178,13 +178,14 @@ class Indicator extends StatelessWidget {
     required this.color,
     required this.text,
     required this.isSquare,
-    this.size = 16,
+    this.size = 14,
     this.textColor = const Color(0xff505050),
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         Container(
           width: size,
@@ -200,7 +201,7 @@ class Indicator extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-              fontSize: 12, fontWeight: FontWeight.bold, color: textColor),
+              fontSize: 10.5, fontWeight: FontWeight.bold, color: textColor),
         )
       ],
     );

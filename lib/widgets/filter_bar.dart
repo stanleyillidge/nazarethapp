@@ -93,20 +93,20 @@ class _FilterBarState extends State<FilterBar> {
           ),
         ),
       ),
-      /* "Single menu": SearchChoices.single(
-        items: items,
-        value: selectedValueSingleMenu,
-        hint: "Select one",
-        searchHint: null,
-        onChanged: (value) {
-          setState(() {
-            selectedValueSingleMenu = value;
-          });
-        },
-        dialogBox: false,
-        isExpanded: true,
-        menuConstraints: BoxConstraints.tight(const Size.fromHeight(350)),
-      ), */
+      // "Single menu": SearchChoices.single(
+      //   items: items,
+      //   value: selectedValueSingleMenu,
+      //   hint: "Select one",
+      //   searchHint: null,
+      //   onChanged: (value) {
+      //     setState(() {
+      //       selectedValueSingleMenu = value;
+      //     });
+      //   },
+      //   dialogBox: false,
+      //   isExpanded: true,
+      //   menuConstraints: BoxConstraints.tight(const Size.fromHeight(350)),
+      // ),
     }; */
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
