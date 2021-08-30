@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:nazarethapp/icons/school_icons_icons.dart';
 import 'package:nazarethapp/widgets/estilos.dart';
 import 'package:nazarethapp/widgets/filter_bar.dart';
+// import 'package:nazarethapp/widgets/lista_estudiantes.dart';
 import 'package:nazarethapp/widgets/models.dart';
 import 'package:nazarethapp/widgets/pie_chart.dart';
+import 'package:nazarethapp/widgets/resumen_estudiantes.dart';
 import 'package:nazarethapp/widgets/top_bar.dart';
 
 class ListasPage extends StatefulWidget {
@@ -113,7 +115,7 @@ class _ListasPageState extends State<ListasPage>
             constraints:
                 BoxConstraints(minHeight: viewportConstraints.maxHeight),
             child: Padding(
-              padding: const EdgeInsets.only(top: 0, left: 20, right: 20),
+              padding: const EdgeInsets.only(top: 0, left: 18, right: 18),
               child: Column(
                 children: [
                   const TopBar(
@@ -149,10 +151,13 @@ class _ListasPageState extends State<ListasPage>
                                 SizedBox(
                                   width: size.width * 0.2,
                                   height: 250,
-                                  child: const GrupoPieChart(
+                                  child: GrupoPieChart(
                                     aprobados: 40,
                                     reprobados: 30,
                                     pendientes: 30,
+                                    centerSpaceRadius: 45,
+                                    sectionRadius: 50,
+                                    convenciones: true,
                                   ),
                                 ),
                                 Padding(
@@ -332,10 +337,6 @@ class _ListasPageState extends State<ListasPage>
                               ],
                             ),
                           ),
-                          /* Placeholder(
-                            fallbackWidth: size.width * 0.2,
-                            fallbackHeight: size.height * 0.82,
-                          ) */
                         ],
                       ),
                       const SizedBox(
@@ -357,22 +358,46 @@ class _ListasPageState extends State<ListasPage>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    decoration: const BoxDecoration(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
                                       color: Colors.white,
                                     ),
                                     child: Column(
                                       children: [
                                         SizedBox(
-                                          height: 85,
+                                          height: 105,
                                           child: Padding(
-                                            padding: const EdgeInsets.all(10),
+                                            padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 30,
+                                            ),
                                             child: Row(
                                               children: const [
                                                 ResumenGrado(
+                                                  color: Colors.lightGreen,
+                                                  cifra: 25,
+                                                  text: 'Aprobados',
+                                                ),
+                                                SizedBox(
+                                                  width: 30,
+                                                  height: 30,
+                                                ),
+                                                ResumenGrado(
+                                                  color: Color(0xfff8b250),
+                                                  cifra: 5,
+                                                  text: 'Pendientes',
+                                                ),
+                                                SizedBox(
+                                                  width: 30,
+                                                  height: 30,
+                                                ),
+                                                ResumenGrado(
                                                   color: Colors.red,
-                                                  cifra: 35,
+                                                  cifra: 5,
                                                   text: 'Reprobados',
-                                                )
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -387,7 +412,7 @@ class _ListasPageState extends State<ListasPage>
                                               preferredSize: const Size(40, 40),
                                               child: SizedBox(
                                                 height: 40,
-                                                width: 250,
+                                                width: 260,
                                                 child: TabBar(
                                                   controller: _controller,
                                                   indicator:
@@ -413,7 +438,7 @@ class _ListasPageState extends State<ListasPage>
                                                             height: 10,
                                                           ),
                                                           Text(
-                                                            'Address',
+                                                            'General',
                                                             style: TextStyle(
                                                               color: Theme.of(
                                                                       context)
@@ -437,7 +462,7 @@ class _ListasPageState extends State<ListasPage>
                                                             height: 10,
                                                           ),
                                                           Text(
-                                                            'Page 2',
+                                                            'Detallado',
                                                             style: TextStyle(
                                                               color: Theme.of(
                                                                       context)
@@ -457,11 +482,11 @@ class _ListasPageState extends State<ListasPage>
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 80.0,
+                                    height: 70, //size.height * .6,
                                     child: TabBarView(
                                       controller: _controller,
                                       children: <Widget>[
-                                        const Card(
+                                        /* const Card(
                                           child: ListTile(
                                             leading: Icon(Icons.home),
                                             title: TextField(
@@ -470,7 +495,9 @@ class _ListasPageState extends State<ListasPage>
                                                       'Search for address...'),
                                             ),
                                           ),
-                                        ),
+                                        ), */
+                                        // const ListaEstudiantes(),
+                                        const ResumenEstudiantes(),
                                         Card(
                                           child: ListTile(
                                             leading:
@@ -486,35 +513,9 @@ class _ListasPageState extends State<ListasPage>
                                       ],
                                     ),
                                   ),
-                                  /* Card(
-                                    elevation: 1,
-                                    child: Container(
-                                      width: size.width * 0.75,
-                                      height: size.height * 0.2,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ), */
-                                  /* Card(
-                                    elevation: 1,
-                                    child: Container(
-                                      width: size.width * 0.75,
-                                      height: size.height * 0.595,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Colors.grey[50],
-                                      ),
-                                    ),
-                                  ), */
                                 ],
                               ),
                             ),
-                            /* Placeholder(
-                              fallbackWidth: size.width * 0.6,
-                              fallbackHeight: size.height * 0.82,
-                            ) */
                           ],
                         ),
                       ),
@@ -549,42 +550,33 @@ class ResumenGrado extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 10, bottom: 0),
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 10,
-              // fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-        // const SizedBox(
-        //   width: 4,
-        // ),
         Text(
           cifra.toString(),
-          style: const TextStyle(
+          style: TextStyle(
+            height: 1.1,
             fontSize: 35,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: color,
           ),
         ),
-        // const SizedBox(
-        //   width: 4,
-        // ),
-        Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: Container(
-            width: 50,
-            height: 5,
-            decoration: BoxDecoration(
-              color: color,
-            ),
+        Container(
+          width: 45,
+          height: 5,
+          decoration: BoxDecoration(
+            color: color.withAlpha(120),
+          ),
+        ),
+        Text(
+          text.toString().toUpperCase(),
+          style: TextStyle(
+            fontSize: 11.5,
+            height: 1.7,
+            // fontWeight: FontWeight.bold,
+            color: Colors.grey[600],
           ),
         ),
       ],

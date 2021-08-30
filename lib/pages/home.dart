@@ -108,7 +108,7 @@ class HomePageState extends State<HomePage> {
             constraints:
                 BoxConstraints(minHeight: viewportConstraints.maxHeight),
             child: Padding(
-              padding: const EdgeInsets.only(top: 0, left: 20, right: 20),
+              padding: const EdgeInsets.only(top: 0, left: 18, right: 18),
               child: Column(
                 children: [
                   TopBar(

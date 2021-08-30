@@ -3,15 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
 class GrupoPieChart extends StatefulWidget {
-  const GrupoPieChart({
+  GrupoPieChart({
     Key? key,
     this.aprobados,
     this.reprobados,
     this.pendientes,
+    this.convenciones,
+    this.centerSpaceRadius,
+    this.sectionRadius,
   }) : super(key: key);
   final double? aprobados;
   final double? reprobados;
   final double? pendientes;
+  final double? centerSpaceRadius;
+  final double? sectionRadius;
+  bool? convenciones = false;
 
   @override
   _GrupoPieChartState createState() => _GrupoPieChartState();
@@ -54,52 +60,55 @@ class _GrupoPieChartState extends State<GrupoPieChart> {
                     borderData: FlBorderData(
                       show: false,
                     ),
-                    sectionsSpace: 5,
-                    centerSpaceRadius: 45,
+                    sectionsSpace: widget.centerSpaceRadius! * .15,
+                    startDegreeOffset: 0,
+                    centerSpaceRadius: widget.centerSpaceRadius,
                     sections: showingSections(),
                   ),
                 ),
               ),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              children: const <Widget>[
-                Indicator(
-                  color: Colors.lightGreen,
-                  text: 'Aprobados',
-                  isSquare: true,
-                ),
-                SizedBox(
-                  height: 2,
-                ),
-                Indicator(
-                  color: Color(0xfff8b250),
-                  text: 'Pendientes',
-                  isSquare: true,
-                ),
-                SizedBox(
-                  height: 2,
-                ),
-                Indicator(
-                  color: Colors.red,
-                  text: 'Reprobados',
-                  isSquare: true,
-                ),
-                SizedBox(
-                  height: 2,
-                ),
-                // Indicator(
-                //   color: Color(0xff13d38e),
-                //   text: 'Fourth',
-                //   isSquare: true,
-                // ),
-                SizedBox(
-                  height: 9,
-                ),
-              ],
-            ),
+            (widget.convenciones!)
+                ? Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const <Widget>[
+                      Indicator(
+                        color: Colors.lightGreen,
+                        text: 'Aprobados',
+                        isSquare: true,
+                      ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Indicator(
+                        color: Color(0xfff8b250),
+                        text: 'Pendientes',
+                        isSquare: true,
+                      ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Indicator(
+                        color: Colors.red,
+                        text: 'Reprobados',
+                        isSquare: true,
+                      ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      // Indicator(
+                      //   color: Color(0xff13d38e),
+                      //   text: 'Fourth',
+                      //   isSquare: true,
+                      // ),
+                      SizedBox(
+                        height: 9,
+                      ),
+                    ],
+                  )
+                : const SizedBox(),
             const SizedBox(
               height: 10,
             ),
@@ -112,8 +121,10 @@ class _GrupoPieChartState extends State<GrupoPieChart> {
   List<PieChartSectionData> showingSections() {
     return List.generate(3, (i) {
       final isTouched = i == touchedIndex;
-      final fontSize = isTouched ? 20.0 : 14.0;
-      final radius = isTouched ? 50.0 : 40.0;
+      final fontSize =
+          isTouched ? widget.sectionRadius! * .40 : widget.sectionRadius! * .25;
+      final radius =
+          isTouched ? widget.sectionRadius : (widget.sectionRadius! * .8);
       switch (i) {
         case 0:
           return PieChartSectionData(
@@ -185,7 +196,7 @@ class Indicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
           width: size,
@@ -201,7 +212,7 @@ class Indicator extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-              fontSize: 10.5, fontWeight: FontWeight.bold, color: textColor),
+              fontSize: 10.3, fontWeight: FontWeight.bold, color: textColor),
         )
       ],
     );
