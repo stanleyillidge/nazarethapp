@@ -156,7 +156,7 @@ class _FilterBarState extends State<FilterBar> {
                           children: [
                             Container(
                               height: 30,
-                              width: 130,
+                              // width: 200,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
                                 color: Colors
@@ -164,8 +164,8 @@ class _FilterBarState extends State<FilterBar> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 15.0),
-                                child: DropdownButton<int>(
-                                  value: dropdownPeriodo,
+                                child: DropdownButton<Sede>(
+                                  value: dropdownSede,
                                   icon: const Icon(Icons.arrow_drop_down),
                                   iconSize: 30,
                                   // elevation: 16,
@@ -180,25 +180,30 @@ class _FilterBarState extends State<FilterBar> {
                                     height: 0,
                                     color: Colors.deepPurpleAccent,
                                   ),
-                                  onChanged: (int? newValue) {
+                                  onChanged: (Sede? newValue) {
                                     setState(() {
-                                      dropdownPeriodo = newValue!;
-                                      print(dropdownPeriodo);
-                                      dxakey.currentState!.setState(() {
+                                      dropdownSede = newValue!;
+                                      print(dropdownSede);
+                                      setState(() {
+                                        dropdownGrupos =
+                                            grupos.where((g) => true).toList();
+                                      });
+                                      /* dxakey.currentState!.setState(() {
                                         listaPendientes = [];
                                         asignacionesPendientes =
                                             asignacionesPendientes;
                                         dxakey.currentState!.cargaAsignaciones(
-                                            dropdownTipo, dropdownPeriodo);
-                                      });
+                                            dropdownTipo, dropdownSede);
+                                      }); */
                                     });
                                   },
-                                  items: periodos
-                                      .map<DropdownMenuItem<int>>((int value) {
-                                    return DropdownMenuItem<int>(
+                                  items: sedes.map<DropdownMenuItem<Sede>>(
+                                      (Sede value) {
+                                    return DropdownMenuItem<Sede>(
                                       value: value,
-                                      child:
-                                          Text('Periodo ' + value.toString()),
+                                      child: (value.nombre!.length > 17)
+                                          ? Text(value.refSimat!)
+                                          : Text(value.nombre!),
                                     );
                                   }).toList(),
                                 ),
@@ -226,7 +231,7 @@ class _FilterBarState extends State<FilterBar> {
                           children: [
                             Container(
                               height: 30,
-                              width: 130,
+                              // width: 130,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
                                 color: Colors
@@ -234,8 +239,8 @@ class _FilterBarState extends State<FilterBar> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 15.0),
-                                child: DropdownButton<int>(
-                                  value: dropdownPeriodo,
+                                child: DropdownButton<Grupo>(
+                                  value: dropdownGrupo,
                                   icon: const Icon(Icons.arrow_drop_down),
                                   iconSize: 30,
                                   // elevation: 16,
@@ -250,25 +255,25 @@ class _FilterBarState extends State<FilterBar> {
                                     height: 0,
                                     color: Colors.deepPurpleAccent,
                                   ),
-                                  onChanged: (int? newValue) {
+                                  onChanged: (Grupo? newValue) {
                                     setState(() {
-                                      dropdownPeriodo = newValue!;
-                                      print(dropdownPeriodo);
-                                      dxakey.currentState!.setState(() {
+                                      dropdownGrupo = newValue!;
+                                      print(dropdownGrupo);
+                                      /* dxakey.currentState!.setState(() {
                                         listaPendientes = [];
                                         asignacionesPendientes =
                                             asignacionesPendientes;
                                         dxakey.currentState!.cargaAsignaciones(
                                             dropdownTipo, dropdownPeriodo);
-                                      });
+                                      }); */
                                     });
                                   },
-                                  items: periodos
-                                      .map<DropdownMenuItem<int>>((int value) {
-                                    return DropdownMenuItem<int>(
+                                  items: dropdownGrupos
+                                      .map<DropdownMenuItem<Grupo>>(
+                                          (Grupo value) {
+                                    return DropdownMenuItem<Grupo>(
                                       value: value,
-                                      child:
-                                          Text('Periodo ' + value.toString()),
+                                      child: Text(value.nombre!),
                                     );
                                   }).toList(),
                                 ),

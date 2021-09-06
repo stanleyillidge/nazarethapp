@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nazarethapp/icons/school_icons_icons.dart';
 import 'package:nazarethapp/widgets/estilos.dart';
 import 'package:nazarethapp/widgets/filter_bar.dart';
-// import 'package:nazarethapp/widgets/lista_estudiantes.dart';
+import 'package:nazarethapp/widgets/lista_estudiantes.dart';
 import 'package:nazarethapp/widgets/models.dart';
 import 'package:nazarethapp/widgets/pie_chart.dart';
 import 'package:nazarethapp/widgets/resumen_estudiantes.dart';
@@ -152,9 +152,9 @@ class _ListasPageState extends State<ListasPage>
                                   width: size.width * 0.2,
                                   height: 250,
                                   child: GrupoPieChart(
-                                    aprobados: 40,
-                                    reprobados: 30,
-                                    pendientes: 30,
+                                    aprobados: 60,
+                                    reprobados: 20,
+                                    pendientes: 20,
                                     centerSpaceRadius: 45,
                                     sectionRadius: 50,
                                     convenciones: true,
@@ -482,10 +482,10 @@ class _ListasPageState extends State<ListasPage>
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 70, //size.height * .6,
+                                    height: size.height * .6,
                                     child: TabBarView(
                                       controller: _controller,
-                                      children: <Widget>[
+                                      children: const <Widget>[
                                         /* const Card(
                                           child: ListTile(
                                             leading: Icon(Icons.home),
@@ -497,8 +497,9 @@ class _ListasPageState extends State<ListasPage>
                                           ),
                                         ), */
                                         // const ListaEstudiantes(),
-                                        const ResumenEstudiantes(),
-                                        Card(
+                                        ResumenEstudiantes(),
+                                        ListaEstudiantes(),
+                                        /* Card(
                                           child: ListTile(
                                             leading:
                                                 const Icon(Icons.location_on),
@@ -509,7 +510,7 @@ class _ListasPageState extends State<ListasPage>
                                                     Icons.my_location),
                                                 onPressed: () {}),
                                           ),
-                                        ),
+                                        ), */
                                       ],
                                     ),
                                   ),

@@ -18,11 +18,15 @@ var calificacionesStorage;
 bool act = false;
 String dropdownTipo = 'Area';
 String dropdownYear = '2020';
-bool newall = false;
 int dropdownPeriodo = 1;
+Grupo? dropdownGrupo;
+String dropdownAsignatura = 'Matematicas';
+List<Grupo> dropdownGrupos = [];
+bool newall = false;
 List<bool> genPlanillas = [];
 List<Widget> paginas = [];
 List<Sede> sedes = [];
+Sede dropdownSede = sedes[1];
 List<Area> areas = [];
 List<Asignatura> asignaturas = [];
 List<Grupo> grupos = [];
@@ -133,6 +137,8 @@ Future cargaTotal([String? year]) async {
   grados = [];
   estudiantes = [];
   docentes = [];
+  logros = [];
+  grupos = [];
   calificaciones = [];
   calificacionesFinales = [];
   asigTotal.asignaciones = [];
@@ -417,14 +423,17 @@ class Fila {
 class Grupo {
   String? nombre;
   bool? activo;
+  Sede? sede;
 
   Grupo({
     this.nombre,
     this.activo,
+    this.sede,
   });
 
   Grupo.fromJson(Map<dynamic, dynamic> json) {
     nombre = json['nombre'] ?? 'No tiene';
+    sede = (json['sede'] != null) ? Sede.fromJson(json['sede']) : null;
     activo = json['activo'] ?? false;
   }
 
@@ -432,6 +441,9 @@ class Grupo {
     final Map<dynamic, dynamic> data = <dynamic, dynamic>{};
     if (nombre != null) {
       data['nombre'] = nombre;
+    }
+    if (sede != null) {
+      data['sede'] = sede!.toJson();
     }
     if (activo != null) {
       data['activo'] = activo;

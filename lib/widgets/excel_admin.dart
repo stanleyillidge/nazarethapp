@@ -71,7 +71,6 @@ Future<void> openFile(BuildContext context) async {
       print(['_excelFile', path]);
       await excelFile(context, path);
     }
-
     // setState(() {
     filePath = path;
     // });
@@ -83,224 +82,228 @@ excelFile(BuildContext context, String path) async {
     print(['Error2', e, path]);
     _ErrorDialog(context, 'Error2', [Text(e.toString())]);
   }
-  try {
-    var bytes = File(path).readAsBytesSync();
-    var libro = SpreadsheetDecoder.decodeBytes(bytes, update: true);
-    for (var hoja in libro.tables.keys) {
-      if (hoja == 'Planilla') {
-        try {
-          print(['Hoja', hoja]);
-          print(['maxCols', libro.tables[hoja]!.maxCols]);
-          print(['maxRows', libro.tables[hoja]!.maxRows]);
-          // var count = libro.tables[hoja]!.rows.length;
-          var rows = libro.tables[hoja]!.rows;
-          var sede = rows[1][1].toString();
-          var docente = rows[2][1].toString();
-          var area = rows[3][1].toString();
-          var grupo = rows[4][1].toString();
-          var logro1 = rows[1][3].toString();
-          var logro2 = rows[2][3].toString();
-          var logro3 = rows[3][3].toString();
-          var periodo = int.parse(rows[4][3].toString());
-          var codGrado =
-              (grupo.length >= 2) ? grupo.substring(0, 1) : grupo.substring(0);
-          var lista = estudiantes
-              .where((e) =>
-                  ((e.sede!.toUpperCase() == sede.toString().toUpperCase()) &&
-                      (e.grupo == grupo)))
-              .toList();
-          lista.sort((a, b) {
-            return a.apellidos!
-                .toLowerCase()
-                .compareTo(b.apellidos!.toLowerCase());
-          });
-          // print([
-          //   grupo.length,
-          //   grupo,
-          //   codGrado,
-          //   grupo.substring(0, 1),
-          //   grupo.substring(0),
-          //   'lista',
-          //   lista.length
-          // ]);
-          var logrosfile =
-              'data/flutter_assets/assets/logros.xlsx'; //'assets/logros.xlsx';
-          var logrosbytes = File(logrosfile).readAsBytesSync();
-          var logrosDB =
-              SpreadsheetDecoder.decodeBytes(logrosbytes, update: false);
-          var lsheet = logrosDB.tables['LOGROS'];
-          // var lcount = lsheet!.rows.length;
-          var clogros = lsheet!.rows
-              .where((l) => ((area
-                      .toUpperCase()
-                      .contains(l[3].toString().toUpperCase())) &&
-                  (l[2].toString() == codGrado)))
-              .toList();
-          // print(['clogros', logro1, logro2, logro3, clogros]);
-          logros = [];
-          for (var j = clogros.length - 1; j >= 0; j--) {
-            // libro.updateCell('Logros', 0, j, clogros[j][1].toString());
-            logros.add(Logro(
-              logro: clogros[j][1].toString(),
-              codGrado: clogros[j][2].toString(),
-              area: clogros[j][3].toString(),
-              periodo: clogros[j][4].toString(),
-              sede: clogros[j][5].toString(),
-              dflogro: clogros[j][9].toString(),
-            ));
-          }
-          bool estado = true;
-          for (var i = 0; i < lista.length; i++) {
-            var n0 = rows[i + 7][1]; // nombre en la hoja de calculo
-            var n1 = lista[i].apellidos! +
-                ' ' +
-                lista[i].nombres!; // nombre en la BD
-            List<Nota> notas = [];
-            notas.add((rows[i + 7][3] != '')
-                ? Nota(nota: rows[i + 7][3] + 0.0, criterio: esfuerzo)
-                : Nota(nota: 0, criterio: esfuerzo));
-            notas.add((rows[i + 7][4] != '')
-                ? Nota(nota: rows[i + 7][4] + 0.0, criterio: actitud)
-                : Nota(nota: 0, criterio: actitud));
-            notas.add((rows[i + 7][5] != '')
-                ? Nota(nota: rows[i + 7][5] + 0.0, criterio: creatividad)
-                : Nota(nota: 0, criterio: creatividad));
-            var notat = (notas[0].nota! != 0) &&
-                (notas[1].nota! != 0) &&
-                (notas[2].nota! != 0);
-            estado =
-                ((notat) && (n0 == n1)) ? (estado && true) : (estado && false);
-            // var index = estudiantes.indexOf(lista[i]);
-            // print(['estado', n1, estado]);
-            for (var j = 0; j < notas.length; j++) {
-              if (n0 == n1) {
-                List<String> logrosf = [];
-                for (var j = 0; j < logros.length; j++) {
-                  if (await logroNota(j, logro1, notas[j].nota!) != null) {
-                    logrosf.add(await logroNota(j, logro1, notas[j].nota!));
-                  } else if (await logroNota(j, logro2, notas[j].nota!) !=
-                      null) {
-                    logrosf.add(await logroNota(j, logro2, notas[j].nota!));
-                  } else if (await logroNota(j, logro3, notas[j].nota!) !=
-                      null) {
-                    logrosf.add(await logroNota(j, logro3, notas[j].nota!));
-                  }
+  // try {
+  var bytes = File(path).readAsBytesSync();
+  var libro = SpreadsheetDecoder.decodeBytes(bytes, update: true);
+  for (var hoja in libro.tables.keys) {
+    if (hoja == 'Planilla') {
+      try {
+        print(['Hoja', hoja]);
+        // print(['maxCols', libro.tables[hoja]!.maxCols]);
+        // print(['maxRows', libro.tables[hoja]!.maxRows]);
+        // var count = libro.tables[hoja]!.rows.length;
+        var rows = libro.tables[hoja]!.rows;
+        var sede = rows[1][1].toString();
+        var docente = rows[2][1].toString();
+        var area = rows[3][1].toString();
+        var grupo = rows[4][1].toString();
+        var logro1 = rows[1][3].toString();
+        var logro2 = rows[2][3].toString();
+        var logro3 = rows[3][3].toString();
+        var periodo = int.parse(rows[4][3].toString());
+        var codGrado =
+            (grupo.length >= 2) ? grupo.substring(0, 1) : grupo.substring(0);
+        var lista = estudiantes
+            .where((e) =>
+                ((e.sede!.toUpperCase() == sede.toString().toUpperCase()) &&
+                    (e.grupo == grupo)))
+            .toList();
+        lista.sort((a, b) {
+          return a.apellidos!
+              .toLowerCase()
+              .compareTo(b.apellidos!.toLowerCase());
+        });
+        // print([
+        //   grupo.length,
+        //   grupo,
+        //   codGrado,
+        //   grupo.substring(0, 1),
+        //   grupo.substring(0),
+        //   'lista',
+        //   lista.length
+        // ]);
+        var logrosfile =
+            'data/flutter_assets/assets/logros.xlsx'; //'assets/logros.xlsx';
+        var logrosbytes = File(logrosfile).readAsBytesSync();
+        var logrosDB =
+            SpreadsheetDecoder.decodeBytes(logrosbytes, update: false);
+        var lsheet = logrosDB.tables['LOGROS'];
+        // var lcount = lsheet!.rows.length;
+        var clogros = lsheet!.rows
+            .where((l) =>
+                ((area.toUpperCase().contains(l[3].toString().toUpperCase())) &&
+                    (l[2].toString() == codGrado)))
+            .toList();
+        // print(['clogros', logro1, logro2, logro3, clogros]);
+        logros = [];
+        for (var j = clogros.length - 1; j >= 0; j--) {
+          // libro.updateCell('Logros', 0, j, clogros[j][1].toString());
+          logros.add(Logro(
+            logro: clogros[j][1].toString(),
+            codGrado: clogros[j][2].toString(),
+            area: clogros[j][3].toString(),
+            periodo: clogros[j][4].toString(),
+            sede: clogros[j][5].toString(),
+            dflogro: clogros[j][9].toString(),
+          ));
+        }
+        bool estado = true;
+        for (var i = 0; i < lista.length; i++) {
+          var n0 = rows[i + 7][1]; // nombre en la hoja de calculo
+          var n1 =
+              lista[i].apellidos! + ' ' + lista[i].nombres!; // nombre en la BD
+          List<Nota> notas = [];
+          notas.add((rows[i + 7][3] != '')
+              ? Nota(nota: rows[i + 7][3] + 0.0, criterio: esfuerzo)
+              : Nota(nota: 0, criterio: esfuerzo));
+          notas.add((rows[i + 7][4] != '')
+              ? Nota(nota: rows[i + 7][4] + 0.0, criterio: actitud)
+              : Nota(nota: 0, criterio: actitud));
+          notas.add((rows[i + 7][5] != '')
+              ? Nota(nota: rows[i + 7][5] + 0.0, criterio: creatividad)
+              : Nota(nota: 0, criterio: creatividad));
+          var notat = (notas[0].nota! != 0) &&
+              (notas[1].nota! != 0) &&
+              (notas[2].nota! != 0);
+          estado =
+              ((notat) && (n0 == n1)) ? (estado && true) : (estado && false);
+          // var index = estudiantes.indexOf(lista[i]);
+          // print(['estado', n1, estado]);
+          for (var j = 0; j < notas.length; j++) {
+            if (n0 == n1) {
+              List<String> logrosf = [];
+              for (var j = 0; j < logros.length; j++) {
+                if (await logroNota(j, logro1, notas[j].nota!) != null) {
+                  logrosf.add(await logroNota(j, logro1, notas[j].nota!));
+                } else if (await logroNota(j, logro2, notas[j].nota!) != null) {
+                  logrosf.add(await logroNota(j, logro2, notas[j].nota!));
+                } else if (await logroNota(j, logro3, notas[j].nota!) != null) {
+                  logrosf.add(await logroNota(j, logro3, notas[j].nota!));
                 }
-                var ie = estudiantes.indexOf(lista[i]);
-                var rta = calificaciones
-                    .where((c) =>
-                        (c.estudianteId == estudiantes[ie].userId!) &&
-                        (c.docente == docente) &&
-                        (c.grupo == grupo) &&
-                        (c.codGrado == codGrado) &&
-                        (c.area == area) &&
-                        (c.periodo == periodo) &&
-                        (c.criterio.nombre == notas[j].criterio!.nombre))
-                    .toList();
-                // la calificación existe?
-                actualizaCalificacion(
-                  docente,
-                  estudiantes[ie].userId!,
-                  docente,
-                  grupo,
-                  codGrado,
-                  area,
-                  notas[j].criterio!,
-                  notas[j].nota!,
-                  logrosf,
-                  periodo,
-                  rta,
-                  'c',
-                );
-                // consulto todas las calificaciones
-                var cals = calificaciones
-                    .where((c) =>
-                        (c.estudianteId == estudiantes[ie].userId!) &&
-                        (c.docente == docente) &&
-                        (c.grupo == grupo) &&
-                        (c.codGrado == codGrado) &&
-                        (c.area == area) &&
-                        (c.periodo == periodo))
-                    .toList();
-                // creo la calificacion final y la añado!
-                double notafinal = notaFinal(cals);
-                rta = calificacionesFinales
-                    .where((c) =>
-                        (c.estudianteId == estudiantes[ie].userId!) &&
-                        (c.docente == docente) &&
-                        (c.grupo == grupo) &&
-                        (c.codGrado == codGrado) &&
-                        (c.area == area) &&
-                        (c.periodo == periodo))
-                    .toList();
-                actualizaCalificacion(
-                  docente,
-                  estudiantes[ie].userId!,
-                  docente,
-                  grupo,
-                  codGrado,
-                  area,
-                  nFinal,
-                  notafinal,
-                  logrosf,
-                  periodo,
-                  rta,
-                  'f',
-                );
               }
+              var ie = estudiantes.indexOf(lista[i]);
+              var rta = calificaciones
+                  .where((c) =>
+                      (c.estudianteId == estudiantes[ie].userId!) &&
+                      (c.docente == docente) &&
+                      (c.grupo == grupo) &&
+                      (c.codGrado == codGrado) &&
+                      (c.area == area) &&
+                      (c.periodo == periodo) &&
+                      (c.criterio.nombre == notas[j].criterio!.nombre))
+                  .toList();
+              // la calificación existe?
+              actualizaCalificacion(
+                docente,
+                estudiantes[ie].userId!,
+                docente,
+                grupo,
+                codGrado,
+                area,
+                notas[j].criterio!,
+                notas[j].nota!,
+                logrosf,
+                periodo,
+                rta,
+                'c',
+              );
+              // consulto todas las calificaciones
+              var cals = calificaciones
+                  .where((c) =>
+                      (c.estudianteId == estudiantes[ie].userId!) &&
+                      (c.docente == docente) &&
+                      (c.grupo == grupo) &&
+                      (c.codGrado == codGrado) &&
+                      (c.area == area) &&
+                      (c.periodo == periodo))
+                  .toList();
+              // creo la calificacion final y la añado!
+              double notafinal = notaFinal(cals);
+              rta = calificacionesFinales
+                  .where((c) =>
+                      (c.estudianteId == estudiantes[ie].userId!) &&
+                      (c.docente == docente) &&
+                      (c.grupo == grupo) &&
+                      (c.codGrado == codGrado) &&
+                      (c.area == area) &&
+                      (c.periodo == periodo))
+                  .toList();
+              actualizaCalificacion(
+                docente,
+                estudiantes[ie].userId!,
+                docente,
+                grupo,
+                codGrado,
+                area,
+                nFinal,
+                notafinal,
+                logrosf,
+                periodo,
+                rta,
+                'f',
+              );
             }
           }
-          var listaC = [];
-          for (var cx in calificaciones) {
-            listaC.add(cx.toJson());
-          }
-          await calificacionesStorage.put('Calificaciones', listaC);
-          // print('Calificaciones guardadas',listaC);
-          var listaCf = [];
-          for (var cx in calificacionesFinales) {
-            listaCf.add(cx.toJson());
-          }
-          await storage.put('Calificaciones', listaCf);
-          // print('Calificaciones finales guardadas',listaCf);
-          asigTotal.asignaciones =
-              await actualizarPendientes(sede, area, docente, grupo, estado);
-          var listaAsig = [];
-          for (var asg in asigTotal.asignaciones) {
-            listaAsig.add(asg.toJson());
-          }
-          await storage.put('Asignaciones', listaAsig);
-          // print('Asignaciones guardadas');
-        } catch (e) {
-          print(['Error en Planillas', e, path]);
-          _ErrorDialog(context, 'Error en Planillas', [Text(e.toString())]);
         }
+        var listaC = [];
+        for (var cx in calificaciones) {
+          listaC.add(cx.toJson());
+        }
+        await calificacionesStorage.put('Calificaciones', listaC);
+        // print('Calificaciones guardadas',listaC);
+        var listaCf = [];
+        for (var cx in calificacionesFinales) {
+          listaCf.add(cx.toJson());
+        }
+        await storage.put('Calificaciones', listaCf);
+        // print('Calificaciones finales guardadas',listaCf);
+        asigTotal.asignaciones =
+            await actualizarPendientes(sede, area, docente, grupo, estado);
+        var listaAsig = [];
+        for (var asg in asigTotal.asignaciones) {
+          listaAsig.add(asg.toJson());
+        }
+        await storage.put('Asignaciones', listaAsig);
+        // print('Asignaciones guardadas');
+      } catch (e) {
+        print(['Error en Planillas', e, path]);
+        _ErrorDialog(context, 'Error en Planillas', [Text(e.toString())]);
       }
-      if (hoja == 'LOGROS') {
+    }
+    if (hoja == 'LOGROS') {
+      try {
         // logros = [];
         print(['Hoja', hoja]);
-        print(['maxCols', libro.tables[hoja]!.maxCols]);
-        print(['maxRows', libro.tables[hoja]!.maxRows]);
+        // print(['maxCols', libro.tables[hoja]!.maxCols]);
+        // print(['maxRows', libro.tables[hoja]!.maxRows]);
         var count = libro.tables[hoja]!.rows.length;
         var rows = libro.tables[hoja]!.rows;
         for (var i = 1; i < count; i++) {
-          var logroC =
-              logros.indexWhere((g) => g.logro == rows[i][1].toString());
-          // print(['logroC', logroC]);
-          Logro logro = Logro(
-            logro: rows[i][1].toString(),
-            codGrado: rows[i][2].toString(),
-            area: rows[i][3].toString(),
-            periodo: rows[i][4].toString(),
-            sede: rows[i][5].toString(),
-            dflogro: rows[i][9].toString(),
-          );
-          if (logroC == -1) {
-            //value not exists
-            logros.add(logro);
-            // print(['logro no existe', logro.toJson()]);
-          } else {
-            //value exists
-            logros[logroC] = logro;
+          try {
+            var logroC =
+                logros.indexWhere((g) => g.logro == rows[i][1].toString());
+            // print(['logroC', logroC, logros.length]);
+            Logro logro = Logro(
+              logro: rows[i][1].toString(),
+              codGrado: rows[i][2].toString(),
+              area: rows[i][3].toString(),
+              periodo: rows[i][4].toString(),
+              sede: rows[i][5].toString(),
+              dflogro: rows[i][9].toString(),
+            );
+            if (logroC == -1) {
+              //value not exists
+              // print(['logro no existe', logro.toJson()]);
+              logros.add(logro);
+            } else {
+              //value exists
+              // print(['logro existe', logroC, logros.length]);
+              logros[logroC] = logro;
+            }
+          } catch (e) {
+            print(['Error en LOGROS - ForIn', e, rows[i], path]);
+            // _ErrorDialog(context, 'LOGROS - ForIn',
+            //     [Text(e.toString()), Text(rows[i].toString())]);
           }
         }
         var listaS = [];
@@ -309,12 +312,17 @@ excelFile(BuildContext context, String path) async {
         }
         // print(['Lista a ser guardada', lista]);
         await storage.put('Logros', listaS);
+      } catch (e) {
+        print(['Error en LOGROS', e, path]);
+        // _ErrorDialog(context, 'Error en LOGROS', [Text(e.toString())]);
       }
-      if (hoja == 'SEDES') {
+    }
+    if (hoja == 'SEDES') {
+      try {
         sedes = [];
         print(['Hoja', hoja]);
-        print(['maxCols', libro.tables[hoja]!.maxCols]);
-        print(['maxRows', libro.tables[hoja]!.maxRows]);
+        // print(['maxCols', libro.tables[hoja]!.maxCols]);
+        // print(['maxRows', libro.tables[hoja]!.maxRows]);
         var count = libro.tables[hoja]!.rows.length;
         var rows = libro.tables[hoja]!.rows;
         for (var i = 1; i < count; i++) {
@@ -346,12 +354,17 @@ excelFile(BuildContext context, String path) async {
           // print(['Lista a ser guardada', lista]);
           await storage.put('Sedes', listaS);
         }
+      } catch (e) {
+        print(['Error en SEDES', e, path]);
+        _ErrorDialog(context, 'Error en SEDES', [Text(e.toString())]);
       }
-      if (hoja == 'GRADOS') {
+    }
+    if (hoja == 'GRADOS') {
+      try {
         grados = [];
         print(['Hoja', hoja]);
-        print(['maxCols', libro.tables[hoja]!.maxCols]);
-        print(['maxRows', libro.tables[hoja]!.maxRows]);
+        // print(['maxCols', libro.tables[hoja]!.maxCols]);
+        // print(['maxRows', libro.tables[hoja]!.maxRows]);
         var count = libro.tables[hoja]!.rows.length;
         var rows = libro.tables[hoja]!.rows;
         for (var i = 1; i < count; i++) {
@@ -380,12 +393,17 @@ excelFile(BuildContext context, String path) async {
           // print(['Lista a ser guardada', lista]);
           await storage.put('Grados', listaG);
         }
+      } catch (e) {
+        print(['Error en GRADOS', e, path]);
+        _ErrorDialog(context, 'Error en GRADOS', [Text(e.toString())]);
       }
-      if (hoja == 'AREAS') {
+    }
+    if (hoja == 'AREAS') {
+      try {
         areas = [];
         print(['Hoja', hoja]);
-        print(['maxCols', libro.tables[hoja]!.maxCols]);
-        print(['maxRows', libro.tables[hoja]!.maxRows]);
+        // print(['maxCols', libro.tables[hoja]!.maxCols]);
+        // print(['maxRows', libro.tables[hoja]!.maxRows]);
         var listaG = [];
         for (var gg in grados) {
           listaG.add(gg.toJson());
@@ -461,12 +479,18 @@ excelFile(BuildContext context, String path) async {
         // print(['Lista a ser guardada', lista]);
         await storage.put('Areas', listaA);
         await storage.put('Grados', listaG);
+      } catch (e) {
+        print(['Error en AREAS', e, path]);
+        _ErrorDialog(context, 'Error en AREAS', [Text(e.toString())]);
       }
-      if (hoja == 'SIMAT') {
+    }
+    if (hoja == 'SIMAT') {
+      try {
         estudiantes = [];
+        grupos = [];
         print(['Hoja', hoja]);
-        print(['maxCols', libro.tables[hoja]!.maxCols]);
-        print(['maxRows', libro.tables[hoja]!.maxRows]);
+        // print(['maxCols', libro.tables[hoja]!.maxCols]);
+        // print(['maxRows', libro.tables[hoja]!.maxRows]);
         var count = libro.tables[hoja]!.rows.length;
         var rows = libro.tables[hoja]!.rows;
         for (var i = 2; i < count; i++) {
@@ -474,36 +498,64 @@ excelFile(BuildContext context, String path) async {
           // est.gradoCod
           Grado gradoC = grados.firstWhere((grd) => grd.codigo == est.gradoCod);
           int gcIndex = grados.indexOf(gradoC);
+          int gpcIndex = -1;
           var n = est.grupo;
-          if (est.grupo!.contains('ROS')) {
-            n = 'J';
-          } else if (est.grupo!.contains('SIP')) {
-            n = 'I';
-          } else if (est.grupo!.contains('GRPA')) {
-            n = 'E';
-          } else if (est.grupo!.contains('IYWO')) {
-            n = 'H';
-          } else if (est.grupo!.contains('JASA')) {
-            n = 'K';
-          } else if (est.grupo!.contains('MTRY')) {
-            n = 'D';
-          } else if (est.grupo!.contains('SCRZ')) {
-            n = 'G';
-          } else if (est.grupo!.contains('SMTR')) {
-            n = 'C';
-          } else if (est.grupo!.contains('TRMN')) {
-            n = 'F';
+          var grupoC = grupos
+              .where((grp) => grp.nombre == est.grupo.toString().toUpperCase())
+              .toList();
+          try {
+            if (grupos.isNotEmpty) {
+              gpcIndex = (grupoC.isNotEmpty) ? grupos.indexOf(grupoC[0]) : -1;
+            }
+            if (est.grupo!.contains('ROS')) {
+              n = 'J';
+            } else if (est.grupo!.contains('SIP')) {
+              n = 'I';
+            } else if (est.grupo!.contains('GRPA')) {
+              n = 'E';
+            } else if (est.grupo!.contains('IYWO')) {
+              n = 'H';
+            } else if (est.grupo!.contains('JASA')) {
+              n = 'K';
+            } else if (est.grupo!.contains('MTRY')) {
+              n = 'D';
+            } else if (est.grupo!.contains('SCRZ')) {
+              n = 'G';
+            } else if (est.grupo!.contains('SMTR')) {
+              n = 'C';
+            } else if (est.grupo!.contains('TRMN')) {
+              n = 'F';
+            }
+            if (n!.length == 1) {
+              n = est.gradoCod.toString() + n;
+            }
+            var cc = grados[gcIndex].grupos!.where((grp) => grp.nombre == n);
+            var ss = (est.sede == 'principal')
+                ? 'Instituciàn Etnoeducativa Rural Internado De Nazareth'
+                : est.sede;
+            Sede se = sedes.firstWhere((s) => s.nombre == ss);
+            Grupo gr = Grupo(
+              nombre: n.toString().toUpperCase(),
+              activo: false,
+              sede: se,
+            );
+            // print(['Sede del grupo', n, se.nombre]);
+            if (cc.isEmpty) {
+              grados[gcIndex].grupos!.add(gr);
+            }
+            // print([i, 'gpcIndex', n, gpcIndex, gr.toJson()]);
+            est.grupo = n.toString().toUpperCase();
+            estudiantes.add(est);
+            if (gpcIndex == -1) {
+              grupos.add(gr);
+            }
+            // print(['Estudiante', est.toJson()]);
+          } catch (e) {
+            // print(['Error en SIMAT - ForIn', e, i, gpcIndex, grupoC]);
+            // est.toJson()
+            _ErrorDialog(
+                context, 'Error en SIMAT - ForIn', [Text(e.toString())]);
           }
-          if (n!.length == 1) {
-            n = est.gradoCod.toString() + n;
-          }
-          var cc = grados[gcIndex].grupos!.where((grp) => grp.nombre == n);
-          if (cc.isEmpty) {
-            grados[gcIndex].grupos!.add(Grupo(nombre: n, activo: false));
-          }
-          est.grupo = n.toString().toUpperCase();
-          estudiantes.add(est);
-          // print(['Estudiante', est.toJson()]);
         }
         var listaE = [];
         for (var gg in estudiantes) {
@@ -513,16 +565,28 @@ excelFile(BuildContext context, String path) async {
         for (var gg in grados) {
           listaG.add(gg.toJson());
         }
+        var listaGp = [];
+        for (var gp in grupos) {
+          listaGp.add(gp.toJson());
+        }
         await storage.put('Grados', listaG);
+        await storage.put('Grupos', listaGp);
         await storage.put('Estudiantes', listaE);
         print(['Estudiantes', listaE.length]);
+        print(['Grupos', listaGp.length]);
         // print(['Estudiante', Estudiante.fromSIMAT(rows[20]).toJson()]);
+      } catch (e) {
+        print(['Error en SIMAT', e, path]);
+        _ErrorDialog(context, 'Error en SIMAT', [Text(e.toString())]);
       }
-      if (hoja == 'BACHILLERATO') {
+    }
+    // Asignaciones academicas
+    if (hoja == 'BACHILLERATO') {
+      try {
         // docentes = [];
         print(['Hoja', hoja]);
-        print(['maxCols', libro.tables[hoja]!.maxCols]);
-        print(['maxRows', libro.tables[hoja]!.maxRows]);
+        // print(['maxCols', libro.tables[hoja]!.maxCols]);
+        // print(['maxRows', libro.tables[hoja]!.maxRows]);
         var count = libro.tables[hoja]!.rows.length;
         var rows = libro.tables[hoja]!.rows;
         var nombre;
@@ -705,21 +769,26 @@ excelFile(BuildContext context, String path) async {
         }
         await storage.put('Asignaciones', listaAsig);
         print(['Asignaciones', listaAsig.length]);
+      } catch (e) {
+        print(['Error en BACHILLERATO', e, path]);
+        _ErrorDialog(context, 'Error en BACHILLERATO', [Text(e.toString())]);
       }
-      if ((hoja == 'SIERRA MAESTRA') ||
-          (hoja == 'MONTERREY') ||
-          (hoja == 'GUARERPA') ||
-          (hoja == 'TOROMANA') ||
-          (hoja == 'SANTA CRUZ') ||
-          (hoja == 'IYULIWOU') ||
-          (hoja == 'SIPANAO') ||
-          (hoja == 'SANTA ROSA') ||
-          (hoja == 'JASARIRU') ||
-          (hoja == 'PRINCIPAL')) {
+    }
+    if ((hoja == 'SIERRA MAESTRA') ||
+        (hoja == 'MONTERREY') ||
+        (hoja == 'GUARERPA') ||
+        (hoja == 'TOROMANA') ||
+        (hoja == 'SANTA CRUZ') ||
+        (hoja == 'IYULIWOU') ||
+        (hoja == 'SIPANAO') ||
+        (hoja == 'SANTA ROSA') ||
+        (hoja == 'JASARIRU') ||
+        (hoja == 'PRINCIPAL')) {
+      try {
         // docentes = [];
         print(['Hoja', hoja]);
-        print(['maxCols', libro.tables[hoja]!.maxCols]);
-        print(['maxRows', libro.tables[hoja]!.maxRows]);
+        // print(['maxCols', libro.tables[hoja]!.maxCols]);
+        // print(['maxRows', libro.tables[hoja]!.maxRows]);
         var count = libro.tables[hoja]!.rows.length;
         var rows = libro.tables[hoja]!.rows;
         var nombre;
@@ -869,7 +938,7 @@ excelFile(BuildContext context, String path) async {
                 }
               } catch (e) {
                 print([
-                  'Error0',
+                  'Error en Asig a grupo',
                   e,
                   'en Asig a grupo',
                   i,
@@ -885,7 +954,7 @@ excelFile(BuildContext context, String path) async {
             }
           } catch (e) {
             print([
-              'Error0',
+              'Error en Fila de Asignacion',
               e,
               'en Fila',
               i,
@@ -908,13 +977,17 @@ excelFile(BuildContext context, String path) async {
         await storage.put('Asignaciones', listaAsig);
         print(['Asignaciones', listaAsig.length]);
         // print(['Docentes', listaD.length, listaD[10]]);
+      } catch (e) {
+        print(['Error en ' + hoja, e, path]);
+        _ErrorDialog(context, 'Error en ' + hoja, [Text(e.toString())]);
       }
     }
-    await acPendientes();
-  } catch (e) {
-    print(['Error0', e, path]);
-    _ErrorDialog(context, 'Error0', [Text(e.toString())]);
   }
+  await acPendientes();
+  // } catch (e) {
+  //   print(['Error0', e, path]);
+  //   _ErrorDialog(context, 'Error0', [Text(e.toString())]);
+  // }
 }
 
 Future logroNota(int i, String logro, double nota) async {
