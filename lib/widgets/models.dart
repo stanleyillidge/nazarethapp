@@ -26,7 +26,7 @@ bool newall = false;
 List<bool> genPlanillas = [];
 List<Widget> paginas = [];
 List<Sede> sedes = [];
-Sede dropdownSede = sedes[1];
+Sede dropdownSede = sedes[0];
 List<Area> areas = [];
 List<Asignatura> asignaturas = [];
 List<Grupo> grupos = [];
@@ -193,7 +193,17 @@ Future carga(a) async {
       // if (a == 'Logros') logros.add(Logro.fromJson(g[i]));
       if (a == 'Sedes') sedes.add(Sede.fromJson(g[i]));
       if (a == 'Areas') areas.add(Area.fromJson(g[i]));
-      if (a == 'Grados') grados.add(Grado.fromJson(g[i]));
+      if (a == 'Grados') {
+        grados.add(Grado.fromJson(g[i]));
+        for (var n = 0; n < grados.length; n++) {
+          for (var e in grados[n].grupos!) {
+            if (!grupos.contains(e)) {
+              grupos.add(e);
+            }
+          }
+        }
+        print(['Grupos - OJO', grupos.length]);
+      }
       if (a == 'Estudiantes') estudiantes.add(Estudiante.fromJson(g[i]));
       if (a == 'Docentes') docentes.add(Docente.fromJson(g[i]));
       if (a == 'Asignaciones') {
@@ -248,6 +258,7 @@ Future actualizarPendientes(
 }
 
 String sede(String grupo) {
+  // print(['Grupo', grupo]);
   String codigo = grupo.substring(grupo.length - 1);
   String codigo0 = grupo.substring(0, grupo.length - 1);
   String ss = 'No tiene';

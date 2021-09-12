@@ -183,10 +183,15 @@ class _FilterBarState extends State<FilterBar> {
                                   onChanged: (Sede? newValue) {
                                     setState(() {
                                       dropdownSede = newValue!;
-                                      print(dropdownSede);
                                       setState(() {
-                                        dropdownGrupos =
-                                            grupos.where((g) => true).toList();
+                                        dropdownGrupos = grupos
+                                            .where((g) => (g.sede!.nombre ==
+                                                dropdownSede.nombre))
+                                            .toList();
+                                        dropdownGrupos.sort((a, b) {
+                                          return a.nombre!.compareTo(b.nombre!);
+                                        });
+                                        dropdownGrupo = null;
                                       });
                                       /* dxakey.currentState!.setState(() {
                                         listaPendientes = [];
@@ -258,7 +263,7 @@ class _FilterBarState extends State<FilterBar> {
                                   onChanged: (Grupo? newValue) {
                                     setState(() {
                                       dropdownGrupo = newValue!;
-                                      print(dropdownGrupo);
+                                      // print(dropdownGrupo!.nombre);
                                       /* dxakey.currentState!.setState(() {
                                         listaPendientes = [];
                                         asignacionesPendientes =
